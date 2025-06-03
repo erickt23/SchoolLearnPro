@@ -17,7 +17,7 @@ import {
   Hand, 
   Settings, 
   Share, 
-  Record,
+  Circle as Record,
   MoreVertical,
   Send,
   Clock,

@@ -7,7 +7,7 @@ import { AuthProvider } from "./hooks/use-auth";
 import { LanguageProvider } from "./hooks/use-language";
 import LandingPage from "@/pages/landing-page-fixed";
 import AuthPage from "@/pages/auth-page-fixed";
-import Dashboard from "@/pages/dashboard";
+import MainDashboard from "@/pages/main-dashboard";
 import { ProtectedRoute } from "./lib/protected-route";
 import NotFound from "@/pages/not-found";
 
@@ -15,7 +15,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/auth" component={AuthPage} />
-      <ProtectedRoute path="/" component={Dashboard} />
+      <ProtectedRoute path="/" component={MainDashboard} />
       <Route path="/landing" component={LandingPage} />
       <Route component={NotFound} />
     </Switch>
