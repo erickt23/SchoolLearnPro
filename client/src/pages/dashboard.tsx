@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/hooks/use-language";
-import LanguageSwitcher from "@/components/language-switcher";
+import LanguageSwitcher from "@/components/language-switcher-new";
 import AdminDashboard from "@/components/dashboard/admin-dashboard";
 import TeacherDashboard from "@/components/dashboard/teacher-dashboard";
 import StudentDashboard from "@/components/dashboard/student-dashboard";
@@ -34,7 +34,7 @@ export default function Dashboard() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
-          <p className="text-gray-600">{t("Chargement...", "Ap chaje...")}</p>
+          <p className="text-gray-600">{t("Chargement...", "Ap chaje...", "Loading...")}</p>
         </div>
       </div>
     );
@@ -56,10 +56,10 @@ export default function Dashboard() {
 
   const getRoleLabel = (role: string) => {
     switch (role) {
-      case "admin": return t("Administrateur", "Administratè");
-      case "teacher": return t("Enseignant", "Pwofesè");
-      case "student": return t("Élève", "Elèv");
-      case "parent": return t("Parent", "Paran");
+      case "admin": return t("Administrateur", "Administratè", "Administrator");
+      case "teacher": return t("Enseignant", "Pwofesè", "Teacher");
+      case "student": return t("Élève", "Elèv", "Student");
+      case "parent": return t("Parent", "Paran", "Parent");
       default: return role;
     }
   };
@@ -77,7 +77,7 @@ export default function Dashboard() {
               <div>
                 <h1 className="text-xl font-bold text-gray-900">EduHaïti</h1>
                 <p className="text-sm text-gray-600">
-                  {t("Tableau de bord", "Tablo jesyon")}
+                  {t("Tableau de bord", "Tablo jesyon", "Dashboard")}
                 </p>
               </div>
             </div>

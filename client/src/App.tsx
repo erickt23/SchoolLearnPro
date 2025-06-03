@@ -6,7 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "./hooks/use-auth";
 import { LanguageProvider } from "./hooks/use-language";
 import LandingPage from "@/pages/landing-page-fixed";
-import AuthPage from "@/pages/auth-page";
+import AuthPage from "@/pages/auth-page-fixed";
 import Dashboard from "@/pages/dashboard";
 import { ProtectedRoute } from "./lib/protected-route";
 import NotFound from "@/pages/not-found";

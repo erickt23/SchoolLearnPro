@@ -10,9 +10,9 @@ export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [
-    { href: "#features", label: t("Fonctionnalités", "Fonksyonalite yo") },
-    { href: "#demo", label: t("Démonstration", "Demonstrasyon") },
-    { href: "#contact", label: t("Contact", "Kontak") },
+    { href: "#features", label: t("Fonctionnalités", "Fonksyonalite yo", "Features") },
+    { href: "#demo", label: t("Démonstration", "Demonstrasyon", "Demo") },
+    { href: "#contact", label: t("Contact", "Kontak", "Contact") },
   ];
 
   const scrollToSection = (href: string) => {
