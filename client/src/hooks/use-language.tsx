@@ -1,12 +1,12 @@
 import { createContext, ReactNode, useContext, useState, useEffect } from "react";
-
-type Language = 'fr' | 'ht' | 'en';
+import { getTranslation, type Language, type TranslationKey } from "@/lib/translations";
 
 interface LanguageContextType {
   currentLanguage: Language;
   setLanguage: (lang: Language) => void;
   nextLanguage: () => void;
-  t: (french: string, haitian: string, english: string) => string;
+  t: (key: TranslationKey) => string;
+  tDirect: (french: string, haitian: string, english: string) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | null>(null);
@@ -34,7 +34,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     setLanguage(languages[nextIndex]);
   };
 
-  const t = (french: string, haitian: string, english: string): string => {
+  const t = (key: TranslationKey): string => {
+    return getTranslation(key, currentLanguage);
+  };
+
+  const tDirect = (french: string, haitian: string, english: string): string => {
     switch (currentLanguage) {
       case 'fr': return french;
       case 'ht': return haitian;
@@ -49,7 +53,8 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
         currentLanguage,
         setLanguage,
         nextLanguage,
-        t
+        t,
+        tDirect
       }}
     >
       {children}
