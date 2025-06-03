@@ -1,11 +1,12 @@
 import { 
   users, students, classes, subjects, grades, attendance, 
-  courses, assignments, submissions, messages, schools,
+  courses, assignments, submissions, messages, schools, schoolNetworks,
   type User, type InsertUser, type Student, type InsertStudent,
   type Class, type InsertClass, type Subject, type InsertSubject,
   type Grade, type InsertGrade, type Attendance, type InsertAttendance,
   type Course, type InsertCourse, type Assignment, type InsertAssignment,
-  type Submission, type InsertSubmission, type Message, type InsertMessage
+  type Submission, type InsertSubmission, type Message, type InsertMessage,
+  type School, type InsertSchool, type SchoolNetwork, type InsertSchoolNetwork
 } from "@shared/schema";
 import { db, pool } from "./db";
 import { eq, and, desc, asc } from "drizzle-orm";
@@ -21,6 +22,17 @@ export interface IStorage {
   getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: number, user: Partial<InsertUser>): Promise<User | undefined>;
+
+  // School Network management
+  getSchoolNetworks(): Promise<SchoolNetwork[]>;
+  getSchoolNetwork(id: number): Promise<SchoolNetwork | undefined>;
+  createSchoolNetwork(network: InsertSchoolNetwork): Promise<SchoolNetwork>;
+
+  // School management
+  getSchools(): Promise<School[]>;
+  getSchool(id: number): Promise<School | undefined>;
+  getSchoolsByNetwork(networkId: number): Promise<School[]>;
+  createSchool(school: InsertSchool): Promise<School>;
 
   // Student management
   getStudent(id: number): Promise<Student | undefined>;
@@ -110,6 +122,46 @@ export class DatabaseStorage implements IStorage {
   async updateUser(id: number, userData: Partial<InsertUser>): Promise<User | undefined> {
     const [user] = await db.update(users).set(userData).where(eq(users.id, id)).returning();
     return user || undefined;
+  }
+
+  // School Network methods
+  async getSchoolNetworks(): Promise<SchoolNetwork[]> {
+    return await db.select().from(schoolNetworks);
+  }
+
+  async getSchoolNetwork(id: number): Promise<SchoolNetwork | undefined> {
+    const [network] = await db.select().from(schoolNetworks).where(eq(schoolNetworks.id, id));
+    return network || undefined;
+  }
+
+  async createSchoolNetwork(network: InsertSchoolNetwork): Promise<SchoolNetwork> {
+    const [newNetwork] = await db
+      .insert(schoolNetworks)
+      .values(network)
+      .returning();
+    return newNetwork;
+  }
+
+  // School methods
+  async getSchools(): Promise<School[]> {
+    return await db.select().from(schools);
+  }
+
+  async getSchool(id: number): Promise<School | undefined> {
+    const [school] = await db.select().from(schools).where(eq(schools.id, id));
+    return school || undefined;
+  }
+
+  async getSchoolsByNetwork(networkId: number): Promise<School[]> {
+    return await db.select().from(schools).where(eq(schools.schoolNetworkId, networkId));
+  }
+
+  async createSchool(school: InsertSchool): Promise<School> {
+    const [newSchool] = await db
+      .insert(schools)
+      .values(school)
+      .returning();
+    return newSchool;
   }
 
   // Student methods
