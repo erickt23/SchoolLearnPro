@@ -41,19 +41,21 @@ export default function LandingPage() {
   const testimonials = [
     {
       name: "Marie-Claire Joseph",
-      role: t("Directrice, École Sainte-Marie", "Direktè, Lekòl Sainte-Marie"),
+      role: t("Directrice, École Sainte-Marie", "Direktè, Lekòl Sainte-Marie", "Principal, Sainte-Marie School"),
       content: t(
         "EduHaïti a transformé notre gestion scolaire. Les parents peuvent maintenant suivre les progrès de leurs enfants en temps réel.",
-        "EduHaïti chanje jesyon lekòl nou an. Paran yo kap gade pwogre pitit yo nan moman yo ye a."
+        "EduHaïti chanje jesyon lekòl nou an. Paran yo kap gade pwogre pitit yo nan moman yo ye a.",
+        "EduHaiti has transformed our school management. Parents can now track their children's progress in real time."
       ),
       rating: 5
     },
     {
       name: "Prof. Nadège Pierre",
-      role: t("Enseignante, Collège Moderne", "Pwofesè, Collège Moderne"),
+      role: t("Enseignante, Collège Moderne", "Pwofesè, Collège Moderne", "Teacher, Modern College"),
       content: t(
         "La fonctionnalité e-learning nous a permis de continuer les cours même pendant les périodes difficiles. Excellent outil !",
-        "Fonksyon e-learning lan pèmèt nou kontinye kou yo menm nan moman ki difisil yo. Ekselan zouti !"
+        "Fonksyon e-learning lan pèmèt nou kontinye kou yo menm nan moman ki difisil yo. Ekselan zouti !",
+        "The e-learning functionality allowed us to continue classes even during difficult periods. Excellent tool!"
       ),
       rating: 5
     },

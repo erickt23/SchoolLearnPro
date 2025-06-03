@@ -1,12 +1,12 @@
 import { createContext, ReactNode, useContext, useState, useEffect } from "react";
 
-type Language = 'fr' | 'ht';
+type Language = 'fr' | 'ht' | 'en';
 
 interface LanguageContextType {
   currentLanguage: Language;
   setLanguage: (lang: Language) => void;
-  toggleLanguage: () => void;
-  t: (french: string, haitian: string) => string;
+  nextLanguage: () => void;
+  t: (french: string, haitian: string, english: string) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | null>(null);
@@ -17,7 +17,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // Load saved language preference from localStorage
     const saved = localStorage.getItem('eduhaiti-language') as Language;
-    if (saved && (saved === 'fr' || saved === 'ht')) {
+    if (saved && (saved === 'fr' || saved === 'ht' || saved === 'en')) {
       setCurrentLanguage(saved);
     }
   }, []);
@@ -27,13 +27,20 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('eduhaiti-language', lang);
   };
 
-  const toggleLanguage = () => {
-    const newLang = currentLanguage === 'fr' ? 'ht' : 'fr';
-    setLanguage(newLang);
+  const nextLanguage = () => {
+    const languages: Language[] = ['fr', 'ht', 'en'];
+    const currentIndex = languages.indexOf(currentLanguage);
+    const nextIndex = (currentIndex + 1) % languages.length;
+    setLanguage(languages[nextIndex]);
   };
 
-  const t = (french: string, haitian: string): string => {
-    return currentLanguage === 'fr' ? french : haitian;
+  const t = (french: string, haitian: string, english: string): string => {
+    switch (currentLanguage) {
+      case 'fr': return french;
+      case 'ht': return haitian;
+      case 'en': return english;
+      default: return french;
+    }
   };
 
   return (
@@ -41,7 +48,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       value={{
         currentLanguage,
         setLanguage,
-        toggleLanguage,
+        nextLanguage,
         t
       }}
     >
