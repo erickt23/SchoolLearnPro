@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/hooks/use-language";
-import LanguageSwitcher from "@/components/language-switcher";
+import LanguageSwitcher from "@/components/language-switcher-new";
 import { 
   Users, 
   GraduationCap, 
@@ -30,7 +30,7 @@ import {
 export default function LandingPage() {
   const { user } = useAuth();
   const [, setLocation] = useLocation();
-  const { t } = useLanguage();
+  const { t, tDirect } = useLanguage();
 
   useEffect(() => {
     if (user) {
@@ -41,8 +41,8 @@ export default function LandingPage() {
   const testimonials = [
     {
       name: "Marie-Claire Joseph",
-      role: t("Directrice, École Sainte-Marie", "Direktè, Lekòl Sainte-Marie", "Principal, Sainte-Marie School"),
-      content: t(
+      role: t("Directrice, École Sainte-Marie"),
+      content: tDirect(
         "EduHaïti a transformé notre gestion scolaire. Les parents peuvent maintenant suivre les progrès de leurs enfants en temps réel.",
         "EduHaïti chanje jesyon lekòl nou an. Paran yo kap gade pwogre pitit yo nan moman yo ye a.",
         "EduHaiti has transformed our school management. Parents can now track their children's progress in real time."

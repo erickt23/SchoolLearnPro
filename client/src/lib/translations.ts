@@ -223,6 +223,58 @@ export const translations = {
     fr: "Administrateur, Institut Saint-Louis",
     ht: "Administratè, Institut Saint-Louis",
     en: "Administrator, Saint-Louis Institute"
+  },
+
+  // Landing page content
+  "Fonctionnalités": {
+    fr: "Fonctionnalités",
+    ht: "Fonksyon yo",
+    en: "Features"
+  },
+  "Témoignages": {
+    fr: "Témoignages",
+    ht: "Temwayaj yo",
+    en: "Testimonials"
+  },
+  "Contact": {
+    fr: "Contact",
+    ht: "Kontak",
+    en: "Contact"
+  },
+  "Commencer": {
+    fr: "Commencer",
+    ht: "Kòmanse",
+    en: "Get Started"
+  },
+  "Faible Bande Passante": {
+    fr: "Faible Bande Passante",
+    ht: "Ti Koneksyon",
+    en: "Low Bandwidth"
+  },
+  "Interface optimisée": {
+    fr: "Interface optimisée pour connexions 2G/3G avec compression avancée",
+    ht: "Entèfas optimize pou koneksyon 2G/3G ak konpresyon avanse",
+    en: "Interface optimized for 2G/3G connections with advanced compression"
+  },
+  "Support Multilingue": {
+    fr: "Support Multilingue",
+    ht: "Sipò Plizyè Lang",
+    en: "Multilingual Support"
+  },
+  "Français, Créole et Anglais": {
+    fr: "Français, Créole et Anglais intégrés avec traduction automatique",
+    ht: "Fransè, Kreyòl ak Angle entegre ak tradiksyon otomatik",
+    en: "French, Creole and English integrated with automatic translation"
+  },
+  "Accès Hors Ligne": {
+    fr: "Accès Hors Ligne",
+    ht: "Aksè San Entènèt",
+    en: "Offline Access"
+  },
+  "Synchronisation": {
+    fr: "Synchronisation automatique des données dès connexion rétablie",
+    ht: "Senkronizasyon otomatik done yo depi koneksyon an retabli",
+    en: "Automatic data synchronization once connection is restored"
   }
 };
 
