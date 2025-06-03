@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import LanguageSwitcher from "@/components/language-switcher-new";
 import Sidebar from "@/components/layout/sidebar";
+import KalitekSidebar from "@/components/layout/kalitek-sidebar";
 import CourseCreation from "@/components/elearning/course-creation";
 import StudentDashboard from "@/components/elearning/student-dashboard";
 import LiveSession from "@/components/elearning/live-session";
@@ -445,6 +446,7 @@ function DashboardHome() {
 export default function EnhancedDashboard() {
   const [showSidebar, setShowSidebar] = useState(false);
   const [useSidebarMode, setUseSidebarMode] = useState(false);
+  const [showKalitekSidebar, setShowKalitekSidebar] = useState(false);
 
   if (useSidebarMode) {
     return (
@@ -488,13 +490,36 @@ export default function EnhancedDashboard() {
 
   return (
     <div className="relative">
-      <div className="fixed top-4 right-4 z-50">
+      {/* Kalitek Sidebar */}
+      {showKalitekSidebar && (
+        <>
+          <div 
+            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
+            onClick={() => setShowKalitekSidebar(false)}
+          />
+          <KalitekSidebar 
+            isOpen={showKalitekSidebar} 
+            onToggle={() => setShowKalitekSidebar(!showKalitekSidebar)}
+          />
+        </>
+      )}
+
+      <div className="fixed top-4 right-4 z-50 flex gap-2">
+        <Button
+          onClick={() => setShowKalitekSidebar(true)}
+          variant="outline"
+          className="flex items-center gap-2"
+          size="sm"
+        >
+          <Menu className="h-4 w-4" />
+          Menu
+        </Button>
         <Button
           onClick={() => setUseSidebarMode(true)}
           className="flex items-center gap-2"
           size="sm"
         >
-          <Menu className="h-4 w-4" />
+          <BarChart3 className="h-4 w-4" />
           Mode avancé
         </Button>
       </div>
