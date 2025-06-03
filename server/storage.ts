@@ -1,0 +1,323 @@
+import { 
+  users, students, classes, subjects, grades, attendance, 
+  courses, assignments, submissions, messages, schools,
+  type User, type InsertUser, type Student, type InsertStudent,
+  type Class, type InsertClass, type Subject, type InsertSubject,
+  type Grade, type InsertGrade, type Attendance, type InsertAttendance,
+  type Course, type InsertCourse, type Assignment, type InsertAssignment,
+  type Submission, type InsertSubmission, type Message, type InsertMessage
+} from "@shared/schema";
+import { db } from "./db";
+import { eq, and, desc, asc } from "drizzle-orm";
+import session from "express-session";
+import connectPg from "connect-pg-simple";
+
+const PostgresSessionStore = connectPg(session);
+
+export interface IStorage {
+  // User management
+  getUser(id: number): Promise<User | undefined>;
+  getUserByUsername(username: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
+  createUser(user: InsertUser): Promise<User>;
+  updateUser(id: number, user: Partial<InsertUser>): Promise<User | undefined>;
+
+  // Student management
+  getStudent(id: number): Promise<Student | undefined>;
+  getStudentByUserId(userId: number): Promise<Student | undefined>;
+  createStudent(student: InsertStudent): Promise<Student>;
+  getStudentsByClass(classId: number): Promise<Student[]>;
+
+  // Class management
+  getClass(id: number): Promise<Class | undefined>;
+  getClasses(): Promise<Class[]>;
+  createClass(classData: InsertClass): Promise<Class>;
+  getClassesByTeacher(teacherId: number): Promise<Class[]>;
+
+  // Subject management
+  getSubjects(): Promise<Subject[]>;
+  createSubject(subject: InsertSubject): Promise<Subject>;
+
+  // Grade management
+  getGradesByStudent(studentId: number): Promise<Grade[]>;
+  getGradesByClass(classId: number): Promise<Grade[]>;
+  createGrade(grade: InsertGrade): Promise<Grade>;
+
+  // Attendance management
+  getAttendanceByStudent(studentId: number, startDate?: Date, endDate?: Date): Promise<Attendance[]>;
+  getAttendanceByClass(classId: number, date: Date): Promise<Attendance[]>;
+  createAttendance(attendance: InsertAttendance): Promise<Attendance>;
+
+  // Course management (E-learning)
+  getCourses(): Promise<Course[]>;
+  getCourse(id: number): Promise<Course | undefined>;
+  getCoursesByTeacher(teacherId: number): Promise<Course[]>;
+  getCoursesByClass(classId: number): Promise<Course[]>;
+  createCourse(course: InsertCourse): Promise<Course>;
+
+  // Assignment management
+  getAssignments(): Promise<Assignment[]>;
+  getAssignment(id: number): Promise<Assignment | undefined>;
+  getAssignmentsByTeacher(teacherId: number): Promise<Assignment[]>;
+  getAssignmentsByClass(classId: number): Promise<Assignment[]>;
+  createAssignment(assignment: InsertAssignment): Promise<Assignment>;
+
+  // Submission management
+  getSubmissionsByAssignment(assignmentId: number): Promise<Submission[]>;
+  getSubmissionsByStudent(studentId: number): Promise<Submission[]>;
+  createSubmission(submission: InsertSubmission): Promise<Submission>;
+  updateSubmission(id: number, submission: Partial<InsertSubmission>): Promise<Submission | undefined>;
+
+  // Message management
+  getMessagesByUser(userId: number): Promise<Message[]>;
+  createMessage(message: InsertMessage): Promise<Message>;
+  markMessageAsRead(id: number): Promise<Message | undefined>;
+
+  sessionStore: session.SessionStore;
+}
+
+export class DatabaseStorage implements IStorage {
+  sessionStore: session.SessionStore;
+
+  constructor() {
+    this.sessionStore = new PostgresSessionStore({ 
+      pool: db as any, 
+      createTableIfMissing: true 
+    });
+  }
+
+  // User methods
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user || undefined;
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user || undefined;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const [user] = await db.insert(users).values(insertUser).returning();
+    return user;
+  }
+
+  async updateUser(id: number, userData: Partial<InsertUser>): Promise<User | undefined> {
+    const [user] = await db.update(users).set(userData).where(eq(users.id, id)).returning();
+    return user || undefined;
+  }
+
+  // Student methods
+  async getStudent(id: number): Promise<Student | undefined> {
+    const [student] = await db.select().from(students).where(eq(students.id, id));
+    return student || undefined;
+  }
+
+  async getStudentByUserId(userId: number): Promise<Student | undefined> {
+    const [student] = await db.select().from(students).where(eq(students.userId, userId));
+    return student || undefined;
+  }
+
+  async createStudent(student: InsertStudent): Promise<Student> {
+    const [newStudent] = await db.insert(students).values(student).returning();
+    return newStudent;
+  }
+
+  async getStudentsByClass(classId: number): Promise<Student[]> {
+    return await db.select().from(students).where(eq(students.classId, classId));
+  }
+
+  // Class methods
+  async getClass(id: number): Promise<Class | undefined> {
+    const [classData] = await db.select().from(classes).where(eq(classes.id, id));
+    return classData || undefined;
+  }
+
+  async getClasses(): Promise<Class[]> {
+    return await db.select().from(classes).where(eq(classes.isActive, true));
+  }
+
+  async createClass(classData: InsertClass): Promise<Class> {
+    const [newClass] = await db.insert(classes).values(classData).returning();
+    return newClass;
+  }
+
+  async getClassesByTeacher(teacherId: number): Promise<Class[]> {
+    return await db.select().from(classes).where(
+      and(eq(classes.teacherId, teacherId), eq(classes.isActive, true))
+    );
+  }
+
+  // Subject methods
+  async getSubjects(): Promise<Subject[]> {
+    return await db.select().from(subjects).where(eq(subjects.isActive, true));
+  }
+
+  async createSubject(subject: InsertSubject): Promise<Subject> {
+    const [newSubject] = await db.insert(subjects).values(subject).returning();
+    return newSubject;
+  }
+
+  // Grade methods
+  async getGradesByStudent(studentId: number): Promise<Grade[]> {
+    return await db.select().from(grades)
+      .where(eq(grades.studentId, studentId))
+      .orderBy(desc(grades.date));
+  }
+
+  async getGradesByClass(classId: number): Promise<Grade[]> {
+    return await db.select().from(grades)
+      .where(eq(grades.classId, classId))
+      .orderBy(desc(grades.date));
+  }
+
+  async createGrade(grade: InsertGrade): Promise<Grade> {
+    const [newGrade] = await db.insert(grades).values(grade).returning();
+    return newGrade;
+  }
+
+  // Attendance methods
+  async getAttendanceByStudent(studentId: number, startDate?: Date, endDate?: Date): Promise<Attendance[]> {
+    let query = db.select().from(attendance).where(eq(attendance.studentId, studentId));
+    
+    if (startDate && endDate) {
+      query = query.where(
+        and(
+          eq(attendance.studentId, studentId),
+          // Add date range filtering here if needed
+        )
+      );
+    }
+    
+    return await query.orderBy(desc(attendance.date));
+  }
+
+  async getAttendanceByClass(classId: number, date: Date): Promise<Attendance[]> {
+    return await db.select().from(attendance)
+      .where(
+        and(
+          eq(attendance.classId, classId),
+          // Add date filtering here
+        )
+      );
+  }
+
+  async createAttendance(attendanceData: InsertAttendance): Promise<Attendance> {
+    const [newAttendance] = await db.insert(attendance).values(attendanceData).returning();
+    return newAttendance;
+  }
+
+  // Course methods
+  async getCourses(): Promise<Course[]> {
+    return await db.select().from(courses)
+      .where(eq(courses.isPublished, true))
+      .orderBy(desc(courses.createdAt));
+  }
+
+  async getCourse(id: number): Promise<Course | undefined> {
+    const [course] = await db.select().from(courses).where(eq(courses.id, id));
+    return course || undefined;
+  }
+
+  async getCoursesByTeacher(teacherId: number): Promise<Course[]> {
+    return await db.select().from(courses)
+      .where(eq(courses.teacherId, teacherId))
+      .orderBy(desc(courses.createdAt));
+  }
+
+  async getCoursesByClass(classId: number): Promise<Course[]> {
+    return await db.select().from(courses)
+      .where(
+        and(
+          eq(courses.classId, classId),
+          eq(courses.isPublished, true)
+        )
+      )
+      .orderBy(desc(courses.createdAt));
+  }
+
+  async createCourse(course: InsertCourse): Promise<Course> {
+    const [newCourse] = await db.insert(courses).values(course).returning();
+    return newCourse;
+  }
+
+  // Assignment methods
+  async getAssignments(): Promise<Assignment[]> {
+    return await db.select().from(assignments).orderBy(desc(assignments.createdAt));
+  }
+
+  async getAssignment(id: number): Promise<Assignment | undefined> {
+    const [assignment] = await db.select().from(assignments).where(eq(assignments.id, id));
+    return assignment || undefined;
+  }
+
+  async getAssignmentsByTeacher(teacherId: number): Promise<Assignment[]> {
+    return await db.select().from(assignments)
+      .where(eq(assignments.teacherId, teacherId))
+      .orderBy(desc(assignments.createdAt));
+  }
+
+  async getAssignmentsByClass(classId: number): Promise<Assignment[]> {
+    return await db.select().from(assignments)
+      .where(eq(assignments.classId, classId))
+      .orderBy(desc(assignments.dueDate));
+  }
+
+  async createAssignment(assignment: InsertAssignment): Promise<Assignment> {
+    const [newAssignment] = await db.insert(assignments).values(assignment).returning();
+    return newAssignment;
+  }
+
+  // Submission methods
+  async getSubmissionsByAssignment(assignmentId: number): Promise<Submission[]> {
+    return await db.select().from(submissions)
+      .where(eq(submissions.assignmentId, assignmentId))
+      .orderBy(desc(submissions.submittedAt));
+  }
+
+  async getSubmissionsByStudent(studentId: number): Promise<Submission[]> {
+    return await db.select().from(submissions)
+      .where(eq(submissions.studentId, studentId))
+      .orderBy(desc(submissions.submittedAt));
+  }
+
+  async createSubmission(submission: InsertSubmission): Promise<Submission> {
+    const [newSubmission] = await db.insert(submissions).values(submission).returning();
+    return newSubmission;
+  }
+
+  async updateSubmission(id: number, submissionData: Partial<InsertSubmission>): Promise<Submission | undefined> {
+    const [submission] = await db.update(submissions)
+      .set(submissionData)
+      .where(eq(submissions.id, id))
+      .returning();
+    return submission || undefined;
+  }
+
+  // Message methods
+  async getMessagesByUser(userId: number): Promise<Message[]> {
+    return await db.select().from(messages)
+      .where(eq(messages.receiverId, userId))
+      .orderBy(desc(messages.sentAt));
+  }
+
+  async createMessage(message: InsertMessage): Promise<Message> {
+    const [newMessage] = await db.insert(messages).values(message).returning();
+    return newMessage;
+  }
+
+  async markMessageAsRead(id: number): Promise<Message | undefined> {
+    const [message] = await db.update(messages)
+      .set({ isRead: true })
+      .where(eq(messages.id, id))
+      .returning();
+    return message || undefined;
+  }
+}
+
+export const storage = new DatabaseStorage();
