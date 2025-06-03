@@ -11,7 +11,19 @@ export const users = pgTable("users", {
   password: text("password").notNull(),
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
-  role: text("role").notNull().default("student"), // admin, teacher, student, parent
+  role: text("role").notNull().default("student"), // network_admin, school_admin, teacher, student, parent
+  schoolId: integer("school_id").references(() => schools.id),
+  schoolNetworkId: integer("school_network_id").references(() => schoolNetworks.id),
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// School Networks table
+export const schoolNetworks = pgTable("school_networks", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description"),
+  adminUserId: integer("admin_user_id").references(() => users.id),
   isActive: boolean("is_active").notNull().default(true),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
@@ -20,10 +32,14 @@ export const users = pgTable("users", {
 export const schools = pgTable("schools", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
+  code: text("code").unique(), // Code unique pour l'école
   address: text("address"),
   phone: text("phone"),
   email: text("email"),
+  schoolNetworkId: integer("school_network_id").references(() => schoolNetworks.id),
+  adminUserId: integer("admin_user_id").references(() => users.id),
   isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 // Classes table
@@ -136,6 +152,14 @@ export const messages = pgTable("messages", {
 
 // Relations
 export const usersRelations = relations(users, ({ many, one }) => ({
+  school: one(schools, {
+    fields: [users.schoolId],
+    references: [schools.id]
+  }),
+  schoolNetwork: one(schoolNetworks, {
+    fields: [users.schoolNetworkId],
+    references: [schoolNetworks.id]
+  }),
   students: many(students),
   classes: many(classes),
   grades: many(grades),
@@ -145,6 +169,28 @@ export const usersRelations = relations(users, ({ many, one }) => ({
   submissions: many(submissions),
   sentMessages: many(messages, { relationName: "sender" }),
   receivedMessages: many(messages, { relationName: "receiver" }),
+}));
+
+export const schoolNetworksRelations = relations(schoolNetworks, ({ one, many }) => ({
+  admin: one(users, {
+    fields: [schoolNetworks.adminUserId],
+    references: [users.id]
+  }),
+  schools: many(schools),
+  users: many(users),
+}));
+
+export const schoolsRelations = relations(schools, ({ one, many }) => ({
+  network: one(schoolNetworks, {
+    fields: [schools.schoolNetworkId],
+    references: [schoolNetworks.id]
+  }),
+  admin: one(users, {
+    fields: [schools.adminUserId],
+    references: [users.id]
+  }),
+  users: many(users),
+  classes: many(classes),
 }));
 
 export const studentsRelations = relations(students, ({ one, many }) => ({
@@ -262,9 +308,23 @@ export const insertMessageSchema = createInsertSchema(messages).omit({
   sentAt: true,
 });
 
+export const insertSchoolNetworkSchema = createInsertSchema(schoolNetworks).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertSchoolSchema = createInsertSchema(schools).omit({
+  id: true,
+  createdAt: true,
+});
+
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
+export type SchoolNetwork = typeof schoolNetworks.$inferSelect;
+export type InsertSchoolNetwork = z.infer<typeof insertSchoolNetworkSchema>;
+export type School = typeof schools.$inferSelect;
+export type InsertSchool = z.infer<typeof insertSchoolSchema>;
 export type Student = typeof students.$inferSelect;
 export type InsertStudent = z.infer<typeof insertStudentSchema>;
 export type Class = typeof classes.$inferSelect;
