@@ -35,17 +35,251 @@ import QuizInterface from "@/components/elearning/quiz-interface";
 
 // Composant SimpleSidebar intégré
 function SimpleSidebar({ onClose }: { onClose?: () => void }) {
-  const { user } = useAuth();
+  const { user, logoutMutation } = useAuth();
   const { t } = useLanguage();
 
-  const menuItems = [
-    { icon: BarChart3, label: t("Tableau de bord", "Tablo jesyon", "Dashboard"), path: "/" },
-    { icon: Users, label: t("Utilisateurs", "Itilizatè yo", "Users"), path: "/users" },
-    { icon: BookOpen, label: t("Cours", "Kou yo", "Courses"), path: "/courses" },
-    { icon: Calendar, label: t("Calendrier", "Kalandriye", "Calendar"), path: "/calendar" },
-    { icon: MessageSquare, label: t("Messages", "Mesaj yo", "Messages"), path: "/messages" },
-    { icon: Settings, label: t("Paramètres", "Paramèt yo", "Settings"), path: "/settings" }
-  ];
+  const getMenuItems = () => {
+    const baseItems = [
+      {
+        title: t("Tableau de bord", "Tablo jesyon", "Dashboard"),
+        icon: BarChart3,
+        path: "/",
+        badge: null,
+        isSection: false
+      }
+    ];
+
+    switch (user?.role) {
+      case 'admin':
+        return [
+          ...baseItems,
+          {
+            title: t("Gestion", "Jesyon", "Management"),
+            icon: null,
+            path: null,
+            badge: null,
+            isSection: true
+          },
+          {
+            title: t("Utilisateurs", "Itilizatè yo", "Users"),
+            icon: Users,
+            path: "/admin/users",
+            badge: "1,234",
+            isSection: false
+          },
+          {
+            title: t("Écoles", "Lekòl yo", "Schools"),
+            icon: GraduationCap,
+            path: "/admin/schools",
+            badge: "45",
+            isSection: false
+          },
+          {
+            title: t("Réseaux scolaires", "Rezo lekòl yo", "School Networks"),
+            icon: BookOpen,
+            path: "/admin/networks",
+            badge: null,
+            isSection: false
+          },
+          {
+            title: t("Analyse", "Analiz", "Analytics"),
+            icon: null,
+            path: null,
+            badge: null,
+            isSection: true
+          },
+          {
+            title: t("Statistiques", "Estatistik yo", "Statistics"),
+            icon: BarChart3,
+            path: "/admin/stats",
+            badge: null,
+            isSection: false
+          },
+          {
+            title: t("Rapports", "Rapò yo", "Reports"),
+            icon: ClipboardList,
+            path: "/admin/reports",
+            badge: null,
+            isSection: false
+          },
+          {
+            title: t("Communication", "Kominikasyon", "Communication"),
+            icon: null,
+            path: null,
+            badge: null,
+            isSection: true
+          },
+          {
+            title: t("Messages", "Mesaj yo", "Messages"),
+            icon: MessageSquare,
+            path: "/messages",
+            badge: "3",
+            isSection: false
+          },
+          {
+            title: t("Notifications", "Notifikasyon yo", "Notifications"),
+            icon: Bell,
+            path: "/notifications",
+            badge: "12",
+            isSection: false
+          }
+        ];
+      case 'teacher':
+        return [
+          ...baseItems,
+          {
+            title: t("Enseignement", "Ansèyman", "Teaching"),
+            icon: null,
+            path: null,
+            badge: null,
+            isSection: true
+          },
+          {
+            title: t("Mes cours", "Kou mwen yo", "My Courses"),
+            icon: BookOpen,
+            path: "/teacher/courses",
+            badge: "8",
+            isSection: false
+          },
+          {
+            title: t("Mes élèves", "Elèv mwen yo", "My Students"),
+            icon: Users,
+            path: "/teacher/students",
+            badge: "156",
+            isSection: false
+          },
+          {
+            title: t("Planning", "Planifikasyon", "Schedule"),
+            icon: Calendar,
+            path: "/teacher/schedule",
+            badge: null,
+            isSection: false
+          },
+          {
+            title: t("E-learning", "E-aprantisaj", "E-learning"),
+            icon: null,
+            path: null,
+            badge: null,
+            isSection: true
+          },
+          {
+            title: t("Sessions live", "Sesyon vivan yo", "Live Sessions"),
+            icon: Video,
+            path: "/teacher/live-sessions",
+            badge: "2",
+            isSection: false
+          },
+          {
+            title: t("Créer un cours", "Kreye yon kou", "Create Course"),
+            icon: Upload,
+            path: "/teacher/create-course",
+            badge: null,
+            isSection: false
+          },
+          {
+            title: t("Communication", "Kominikasyon", "Communication"),
+            icon: null,
+            path: null,
+            badge: null,
+            isSection: true
+          },
+          {
+            title: t("Messages", "Mesaj yo", "Messages"),
+            icon: MessageSquare,
+            path: "/messages",
+            badge: "5",
+            isSection: false
+          }
+        ];
+      case 'student':
+        return [
+          ...baseItems,
+          {
+            title: t("Mes études", "Etid mwen yo", "My Studies"),
+            icon: null,
+            path: null,
+            badge: null,
+            isSection: true
+          },
+          {
+            title: t("Mes cours", "Kou mwen yo", "My Courses"),
+            icon: BookOpen,
+            path: "/student/courses",
+            badge: "5",
+            isSection: false
+          },
+          {
+            title: t("Devoirs", "Devoir yo", "Assignments"),
+            icon: ClipboardList,
+            path: "/student/assignments",
+            badge: "3",
+            isSection: false
+          },
+          {
+            title: t("Notes", "Nòt yo", "Grades"),
+            icon: Award,
+            path: "/student/grades",
+            badge: null,
+            isSection: false
+          },
+          {
+            title: t("Activités", "Aktivite yo", "Activities"),
+            icon: null,
+            path: null,
+            badge: null,
+            isSection: true
+          },
+          {
+            title: t("Sessions live", "Sesyon vivan yo", "Live Sessions"),
+            icon: Video,
+            path: "/student/live-sessions",
+            badge: "1",
+            isSection: false
+          },
+          {
+            title: t("Planning", "Planifikasyon", "Schedule"),
+            icon: Calendar,
+            path: "/student/schedule",
+            badge: null,
+            isSection: false
+          },
+          {
+            title: t("Communication", "Kominikasyon", "Communication"),
+            icon: null,
+            path: null,
+            badge: null,
+            isSection: true
+          },
+          {
+            title: t("Messages", "Mesaj yo", "Messages"),
+            icon: MessageSquare,
+            path: "/messages",
+            badge: "2",
+            isSection: false
+          }
+        ];
+      default:
+        return [
+          ...baseItems,
+          {
+            title: t("Messages", "Mesaj yo", "Messages"),
+            icon: MessageSquare,
+            path: "/messages",
+            badge: null,
+            isSection: false
+          },
+          {
+            title: t("Paramètres", "Paramèt yo", "Settings"),
+            icon: Settings,
+            path: "/settings",
+            badge: null,
+            isSection: false
+          }
+        ];
+    }
+  };
+
+  const menuItems = getMenuItems();
 
   return (
     <div className="h-full w-64 bg-white border-r border-gray-200 flex flex-col">
@@ -81,20 +315,63 @@ function SimpleSidebar({ onClose }: { onClose?: () => void }) {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4">
-        <ul className="space-y-2">
-          {menuItems.map((item, index) => (
-            <li key={index}>
-              <a
-                href={item.path}
-                className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+      <nav className="flex-1 p-4 overflow-y-auto">
+        <div className="space-y-1">
+          {menuItems.map((item, index) => {
+            if (item.isSection) {
+              return (
+                <div key={index} className="mt-6 first:mt-0">
+                  <div className="px-3 py-2">
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                      {item.title}
+                    </p>
+                  </div>
+                </div>
+              );
+            }
+
+            return (
+              <Button
+                key={item.path || index}
+                variant="ghost"
+                className="w-full justify-start text-left hover:bg-gray-100"
+                onClick={() => {
+                  // Navigation logic here
+                  onClose && onClose();
+                }}
               >
-                <item.icon className="h-5 w-5" />
-                <span className="text-sm font-medium">{item.label}</span>
-              </a>
-            </li>
-          ))}
-        </ul>
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex items-center">
+                    {item.icon && <item.icon className="mr-3 h-4 w-4" />}
+                    <span>{item.title}</span>
+                  </div>
+                  {item.badge && (
+                    <Badge variant="secondary" className="ml-auto text-xs">
+                      {item.badge}
+                    </Badge>
+                  )}
+                </div>
+              </Button>
+            );
+          })}
+        </div>
+
+        {/* Logout Button */}
+        <div className="mt-4 px-3">
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full text-red-600 hover:bg-red-50 hover:text-red-700 border-red-200"
+            onClick={() => {
+              logoutMutation.mutate();
+              onClose && onClose();
+            }}
+            disabled={logoutMutation.isPending}
+          >
+            <User className="mr-2 h-4 w-4" />
+            {t("Déconnexion", "Dekonekte", "Logout")}
+          </Button>
+        </div>
       </nav>
     </div>
   );
@@ -312,12 +589,10 @@ function DashboardHome() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <GraduationCap className="h-8 w-8 text-primary mr-3" />
               <div>
-                <h1 className="text-xl font-bold text-gray-900">EduHaïti</h1>
-                <p className="text-sm text-gray-600">
+                <h1 className="text-xl font-bold text-gray-900">
                   {t("Tableau de bord", "Tablo jesyon", "Dashboard")}
-                </p>
+                </h1>
               </div>
             </div>
 
