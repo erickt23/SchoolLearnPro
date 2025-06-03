@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useLanguage } from "@/hooks/use-language";
+import LanguageSwitcher from "@/components/language-switcher-new";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -170,12 +171,17 @@ export default function StudentDashboard() {
     <div className="container mx-auto p-6 max-w-7xl">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          {t("Tableau de bord étudiant", "Tablo jesyon elèv la", "Student Dashboard")}
-        </h1>
-        <p className="text-gray-600">
-          {t("Bienvenue! Continuez votre apprentissage.", "Byenveni! Kontinye aprann ou an.", "Welcome! Continue your learning journey.")}
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              {t("Tableau de bord étudiant", "Tablo jesyon elèv la", "Student Dashboard")}
+            </h1>
+            <p className="text-gray-600">
+              {t("Bienvenue! Continuez votre apprentissage.", "Byenveni! Kontinye aprann ou an.", "Welcome! Continue your learning journey.")}
+            </p>
+          </div>
+          <LanguageSwitcher />
+        </div>
       </div>
 
       {/* Stats Cards */}

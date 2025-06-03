@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useLanguage } from "@/hooks/use-language";
+import LanguageSwitcher from "@/components/language-switcher-new";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -129,6 +130,7 @@ export default function CourseCreation() {
             </p>
           </div>
           <div className="flex gap-3">
+            <LanguageSwitcher />
             <Button variant="outline" className="flex items-center gap-2">
               <Eye className="h-4 w-4" />
               {t("Aperçu", "Aperçu", "Preview")}
