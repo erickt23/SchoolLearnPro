@@ -296,9 +296,7 @@ function SimpleSidebar({ onClose }: { onClose?: () => void }) {
             </Button>
           )}
         </div>
-        <div className="mt-2">
-          <LanguageSwitcher />
-        </div>
+
       </div>
 
       {/* User Info */}

@@ -15,34 +15,28 @@ export default function LanguageSwitcher() {
   const currentLang = languages.find(lang => lang.code === currentLanguage);
 
   return (
-    <div className="fixed top-4 right-4 z-50">
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="outline"
-            size="sm"
-            className="bg-white shadow-md border border-gray-200 hover:bg-gray-50 min-w-[140px]"
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-8 w-8 p-0"
+        >
+          <span className="text-lg">{currentLang?.flag}</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="min-w-[140px]">
+        {languages.map((language) => (
+          <DropdownMenuItem
+            key={language.code}
+            onClick={() => setLanguage(language.code)}
+            className={`flex items-center ${currentLanguage === language.code ? "bg-accent" : ""}`}
           >
-            <Globe className="h-4 w-4 mr-2" />
-            <span className="text-lg mr-2">{currentLang?.flag}</span>
-            <span className="font-medium">
-              {currentLang?.label}
-            </span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="min-w-[140px]">
-          {languages.map((language) => (
-            <DropdownMenuItem
-              key={language.code}
-              onClick={() => setLanguage(language.code)}
-              className={`flex items-center ${currentLanguage === language.code ? "bg-accent" : ""}`}
-            >
-              <span className="text-lg mr-3">{language.flag}</span>
-              <span className="font-medium">{language.label}</span>
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+            <span className="text-lg mr-3">{language.flag}</span>
+            <span className="font-medium">{language.label}</span>
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
