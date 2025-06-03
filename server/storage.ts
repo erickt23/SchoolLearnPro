@@ -7,7 +7,7 @@ import {
   type Course, type InsertCourse, type Assignment, type InsertAssignment,
   type Submission, type InsertSubmission, type Message, type InsertMessage
 } from "@shared/schema";
-import { db } from "./db";
+import { db, pool } from "./db";
 import { eq, and, desc, asc } from "drizzle-orm";
 import session from "express-session";
 import connectPg from "connect-pg-simple";
@@ -73,15 +73,15 @@ export interface IStorage {
   createMessage(message: InsertMessage): Promise<Message>;
   markMessageAsRead(id: number): Promise<Message | undefined>;
 
-  sessionStore: session.SessionStore;
+  sessionStore: any;
 }
 
 export class DatabaseStorage implements IStorage {
-  sessionStore: session.SessionStore;
+  sessionStore: any;
 
   constructor() {
     this.sessionStore = new PostgresSessionStore({ 
-      pool: db as any, 
+      pool: pool, 
       createTableIfMissing: true 
     });
   }
