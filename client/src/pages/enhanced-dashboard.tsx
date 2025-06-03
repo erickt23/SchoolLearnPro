@@ -27,7 +27,6 @@ import {
 } from "lucide-react";
 import LanguageSwitcher from "@/components/language-switcher-new";
 import Sidebar from "@/components/layout/sidebar";
-import KalitekSidebar from "@/components/layout/kalitek-sidebar";
 import CourseCreation from "@/components/elearning/course-creation";
 import StudentDashboard from "@/components/elearning/student-dashboard";
 import LiveSession from "@/components/elearning/live-session";
@@ -489,55 +488,66 @@ export default function EnhancedDashboard() {
   }
 
   return (
-    <div className="relative">
-      {/* Kalitek Sidebar */}
+    <div className="flex min-h-screen bg-gray-50">
+      {/* Sidebar fixe pour grands écrans */}
+      <div className="hidden lg:block w-64">
+        <SimpleSidebar />
+      </div>
+
+      {/* Sidebar mobile */}
       {showKalitekSidebar && (
         <>
           <div 
-            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
+            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 lg:hidden"
             onClick={() => setShowKalitekSidebar(false)}
           />
-          <KalitekSidebar 
-            isOpen={showKalitekSidebar} 
-            onToggle={() => setShowKalitekSidebar(!showKalitekSidebar)}
-          />
+          <div className="lg:hidden fixed left-0 top-0 h-full w-64 z-50">
+            <SimpleSidebar onClose={() => setShowKalitekSidebar(false)} />
+          </div>
         </>
       )}
 
-      <div className="fixed top-4 right-4 z-50 flex gap-2">
-        <Button
-          onClick={() => setShowKalitekSidebar(true)}
-          variant="outline"
-          className="flex items-center gap-2"
-          size="sm"
-        >
-          <Menu className="h-4 w-4" />
-          Menu
-        </Button>
-        <Button
-          onClick={() => setUseSidebarMode(true)}
-          className="flex items-center gap-2"
-          size="sm"
-        >
-          <BarChart3 className="h-4 w-4" />
-          Mode avancé
-        </Button>
+      {/* Contenu principal */}
+      <div className="flex-1 lg:ml-0">
+        {/* Boutons de navigation */}
+        <div className="fixed top-4 right-4 z-50 flex gap-2">
+          <Button
+            onClick={() => setShowKalitekSidebar(true)}
+            variant="outline"
+            className="flex items-center gap-2 lg:hidden"
+            size="sm"
+          >
+            <Menu className="h-4 w-4" />
+            Menu
+          </Button>
+          <Button
+            onClick={() => setUseSidebarMode(true)}
+            className="flex items-center gap-2"
+            size="sm"
+          >
+            <BarChart3 className="h-4 w-4" />
+            Mode avancé
+          </Button>
+        </div>
+
+        {/* Contenu principal du dashboard */}
+        <div className="p-4 lg:p-8">
+          <Switch>
+            <Route path="/elearning/dashboard" component={() => {
+              setUseSidebarMode(true);
+              return <DashboardHome />;
+            }} />
+            <Route path="/teacher/create-course" component={CourseCreation} />
+            <Route path="/teacher/live-sessions" component={LiveSession} />
+            <Route path="/student/courses" component={StudentDashboard} />
+            <Route path="/student/quiz/:id" component={QuizInterface} />
+            <Route path="/live-session/:id" component={LiveSession} />
+            <Route>
+              <DashboardHome />
+            </Route>
+          </Switch>
+        </div>
       </div>
-      
-      <Switch>
-        <Route path="/elearning/dashboard" component={() => {
-          setUseSidebarMode(true);
-          return <DashboardHome />;
-        }} />
-        <Route path="/teacher/create-course" component={CourseCreation} />
-        <Route path="/teacher/live-sessions" component={LiveSession} />
-        <Route path="/student/courses" component={StudentDashboard} />
-        <Route path="/student/quiz/:id" component={QuizInterface} />
-        <Route path="/live-session/:id" component={LiveSession} />
-        <Route>
-          <DashboardHome />
-        </Route>
-      </Switch>
     </div>
   );
 }
