@@ -23,7 +23,8 @@ import {
   Clock,
   Video,
   Upload,
-  CheckSquare
+  CheckSquare,
+  User
 } from "lucide-react";
 import LanguageSwitcher from "@/components/language-switcher-new";
 import Sidebar from "@/components/layout/sidebar";
@@ -31,6 +32,73 @@ import CourseCreation from "@/components/elearning/course-creation";
 import StudentDashboard from "@/components/elearning/student-dashboard";
 import LiveSession from "@/components/elearning/live-session";
 import QuizInterface from "@/components/elearning/quiz-interface";
+
+// Composant SimpleSidebar intégré
+function SimpleSidebar({ onClose }: { onClose?: () => void }) {
+  const { user } = useAuth();
+  const { t } = useLanguage();
+
+  const menuItems = [
+    { icon: BarChart3, label: t("Tableau de bord", "Tablo jesyon", "Dashboard"), path: "/" },
+    { icon: Users, label: t("Utilisateurs", "Itilizatè yo", "Users"), path: "/users" },
+    { icon: BookOpen, label: t("Cours", "Kou yo", "Courses"), path: "/courses" },
+    { icon: Calendar, label: t("Calendrier", "Kalandriye", "Calendar"), path: "/calendar" },
+    { icon: MessageSquare, label: t("Messages", "Mesaj yo", "Messages"), path: "/messages" },
+    { icon: Settings, label: t("Paramètres", "Paramèt yo", "Settings"), path: "/settings" }
+  ];
+
+  return (
+    <div className="h-full w-64 bg-white border-r border-gray-200 flex flex-col">
+      {/* Header */}
+      <div className="p-4 border-b border-gray-200">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <GraduationCap className="h-8 w-8 text-blue-600" />
+            <span className="text-xl font-bold text-gray-900">EduPro</span>
+          </div>
+          {onClose && (
+            <Button variant="ghost" size="sm" onClick={onClose}>
+              <X className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+        <div className="mt-2">
+          <LanguageSwitcher />
+        </div>
+      </div>
+
+      {/* User Info */}
+      <div className="p-4 border-b border-gray-200">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+            <User className="h-5 w-5 text-blue-600" />
+          </div>
+          <div>
+            <p className="font-medium text-sm">{user?.firstName} {user?.lastName}</p>
+            <p className="text-xs text-gray-500 capitalize">{user?.role}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Navigation */}
+      <nav className="flex-1 p-4">
+        <ul className="space-y-2">
+          {menuItems.map((item, index) => (
+            <li key={index}>
+              <a
+                href={item.path}
+                className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+              >
+                <item.icon className="h-5 w-5" />
+                <span className="text-sm font-medium">{item.label}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+  );
+}
 
 function DashboardHome() {
   const { user } = useAuth();
