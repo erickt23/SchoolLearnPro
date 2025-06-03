@@ -24,6 +24,38 @@ export function registerRoutes(app: Express): Server {
     next();
   };
 
+  // School Networks endpoints
+  app.get("/api/school-networks", async (req, res) => {
+    try {
+      const networks = await storage.getSchoolNetworks();
+      res.json(networks);
+    } catch (error) {
+      console.error("Erreur lors de la récupération des réseaux d'écoles:", error);
+      res.status(500).json({ error: "Erreur serveur" });
+    }
+  });
+
+  app.get("/api/schools", async (req, res) => {
+    try {
+      const schools = await storage.getSchools();
+      res.json(schools);
+    } catch (error) {
+      console.error("Erreur lors de la récupération des écoles:", error);
+      res.status(500).json({ error: "Erreur serveur" });
+    }
+  });
+
+  app.get("/api/schools/by-network/:networkId", async (req, res) => {
+    try {
+      const networkId = parseInt(req.params.networkId);
+      const schools = await storage.getSchoolsByNetwork(networkId);
+      res.json(schools);
+    } catch (error) {
+      console.error("Erreur lors de la récupération des écoles du réseau:", error);
+      res.status(500).json({ error: "Erreur serveur" });
+    }
+  });
+
   // Dashboard data endpoint
   app.get("/api/dashboard", requireAuth, async (req, res) => {
     try {
