@@ -576,7 +576,7 @@ export default function CourseManagement() {
                         <SelectItem value="">{t("Tous niveaux", "Tout nivo yo", "All levels")}</SelectItem>
                         {classes.map((classItem) => (
                           <SelectItem key={classItem.id} value={classItem.id.toString()}>
-                            {classItem.label}
+                            {classItem.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -595,7 +595,7 @@ export default function CourseManagement() {
                         <SelectItem value="">{t("Non assigné", "Pa asiyen", "Unassigned")}</SelectItem>
                         {teachers.map((teacher) => (
                           <SelectItem key={teacher.id} value={teacher.id.toString()}>
-                            {teacher.firstName} {teacher.lastName}
+                            Teacher {teacher.id}
                           </SelectItem>
                         ))}
                       </SelectContent>
