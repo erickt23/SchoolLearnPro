@@ -24,7 +24,8 @@ import {
   Video,
   Upload,
   CheckSquare,
-  User
+  User,
+  School
 } from "lucide-react";
 import LanguageSwitcher from "@/components/language-switcher-new";
 import Sidebar from "@/components/layout/sidebar";
@@ -65,6 +66,20 @@ function SimpleSidebar({ onClose }: { onClose?: () => void }) {
             icon: Users,
             path: "/admin/users",
             badge: "1,234",
+            isSection: false
+          },
+          {
+            title: t("Import en masse", "Enpòtasyon an mas", "Bulk Import"),
+            icon: Upload,
+            path: "/admin/bulk-import",
+            badge: null,
+            isSection: false
+          },
+          {
+            title: t("Classes", "Klas yo", "Classes"),
+            icon: School,
+            path: "/admin/classes",
+            badge: null,
             isSection: false
           },
           {

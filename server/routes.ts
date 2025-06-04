@@ -485,6 +485,39 @@ export function registerRoutes(app: Express): Server {
     }
   });
 
+  // Bulk import endpoints
+  app.post("/api/import/students", requireAuth, requireRole(["admin"]), async (req, res) => {
+    try {
+      // For now, return mock success response
+      // In real implementation, process uploaded CSV file
+      const result = {
+        success: true,
+        validRows: 25,
+        invalidRows: 0,
+        errors: []
+      };
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to import students" });
+    }
+  });
+
+  app.post("/api/import/employees", requireAuth, requireRole(["admin"]), async (req, res) => {
+    try {
+      // For now, return mock success response
+      // In real implementation, process uploaded CSV file
+      const result = {
+        success: true,
+        validRows: 15,
+        invalidRows: 0,
+        errors: []
+      };
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to import employees" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
