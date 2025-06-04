@@ -474,6 +474,17 @@ export function registerRoutes(app: Express): Server {
     }
   });
 
+  // Users list endpoint for table display
+  app.get("/api/users", requireAuth, requireRole(["admin"]), async (req, res) => {
+    try {
+      const users = await storage.getAllUsers();
+      res.json(users);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      res.status(500).json({ error: "Failed to fetch users" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

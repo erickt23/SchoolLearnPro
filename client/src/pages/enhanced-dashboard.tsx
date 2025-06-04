@@ -75,13 +75,6 @@ function SimpleSidebar({ onClose }: { onClose?: () => void }) {
             isSection: false
           },
           {
-            title: t("Gestion des utilisateurs", "Jesyon itilizatè yo", "User Management"),
-            icon: Users,
-            path: "/admin/users",
-            badge: null,
-            isSection: false
-          },
-          {
             title: t("Réseaux scolaires", "Rezo lekòl yo", "School Networks"),
             icon: BookOpen,
             path: "/admin/networks",

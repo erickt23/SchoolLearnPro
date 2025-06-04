@@ -9,6 +9,7 @@ import LandingPage from "@/pages/landing-page-fixed";
 import AuthPage from "@/pages/auth-page-fixed";
 import EnhancedDashboard from "@/pages/enhanced-dashboard";
 import UserManagement from "@/pages/user-management";
+import UsersTable from "@/pages/users-table";
 import { ProtectedRoute } from "./lib/protected-route";
 import NotFound from "@/pages/not-found";
 
@@ -17,7 +18,8 @@ function Router() {
     <Switch>
       <Route path="/auth" component={AuthPage} />
       <ProtectedRoute path="/" component={EnhancedDashboard} />
-      <ProtectedRoute path="/admin/users" component={UserManagement} />
+      <ProtectedRoute path="/admin/users" component={UsersTable} />
+      <ProtectedRoute path="/admin/user-management" component={UserManagement} />
       <Route path="/landing" component={LandingPage} />
       <Route component={NotFound} />
     </Switch>
