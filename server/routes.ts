@@ -388,6 +388,92 @@ export function registerRoutes(app: Express): Server {
     }
   });
 
+  // Teachers endpoints
+  app.get("/api/teachers", requireAuth, requireRole(["admin"]), async (req, res) => {
+    try {
+      const teachers = await storage.getTeachers();
+      res.json(teachers);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch teachers" });
+    }
+  });
+
+  app.get("/api/teachers/:id", requireAuth, async (req, res) => {
+    try {
+      const teacher = await storage.getTeacher(parseInt(req.params.id));
+      if (!teacher) {
+        return res.status(404).json({ error: "Teacher not found" });
+      }
+      res.json(teacher);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch teacher" });
+    }
+  });
+
+  app.post("/api/teachers", requireAuth, requireRole(["admin"]), async (req, res) => {
+    try {
+      const teacher = await storage.createTeacher(req.body);
+      res.status(201).json(teacher);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to create teacher" });
+    }
+  });
+
+  app.put("/api/teachers/:id", requireAuth, requireRole(["admin"]), async (req, res) => {
+    try {
+      const teacher = await storage.updateTeacher(parseInt(req.params.id), req.body);
+      if (!teacher) {
+        return res.status(404).json({ error: "Teacher not found" });
+      }
+      res.json(teacher);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update teacher" });
+    }
+  });
+
+  // Parents endpoints
+  app.get("/api/parents", requireAuth, requireRole(["admin"]), async (req, res) => {
+    try {
+      const parents = await storage.getParents();
+      res.json(parents);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch parents" });
+    }
+  });
+
+  app.get("/api/parents/:id", requireAuth, async (req, res) => {
+    try {
+      const parent = await storage.getParent(parseInt(req.params.id));
+      if (!parent) {
+        return res.status(404).json({ error: "Parent not found" });
+      }
+      res.json(parent);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch parent" });
+    }
+  });
+
+  app.post("/api/parents", requireAuth, requireRole(["admin"]), async (req, res) => {
+    try {
+      const parent = await storage.createParent(req.body);
+      res.status(201).json(parent);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to create parent" });
+    }
+  });
+
+  app.put("/api/parents/:id", requireAuth, requireRole(["admin"]), async (req, res) => {
+    try {
+      const parent = await storage.updateParent(parseInt(req.params.id), req.body);
+      if (!parent) {
+        return res.status(404).json({ error: "Parent not found" });
+      }
+      res.json(parent);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update parent" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
