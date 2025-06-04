@@ -319,7 +319,7 @@ export default function ClassManagement() {
                     <SelectValue placeholder={t("Choisir classe précédente", "Chwazi klas anvan an", "Choose previous class")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">{t("PAS DE CLASSE PRÉCÉDENTE", "PA GEN KLAS ANVAN", "NO PREVIOUS CLASS")}</SelectItem>
+                    <SelectItem value="none">{t("PAS DE CLASSE PRÉCÉDENTE", "PA GEN KLAS ANVAN", "NO PREVIOUS CLASS")}</SelectItem>
                     {classes.map((classItem) => (
                       <SelectItem key={classItem.id} value={classItem.label}>
                         {classItem.label}

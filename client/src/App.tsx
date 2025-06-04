@@ -16,6 +16,9 @@ import ClassManagement from "@/pages/class-management";
 import VideoConference from "@/pages/video-conference";
 import PaymentModule from "@/pages/payment-module";
 import MobileApp from "@/pages/mobile-app";
+import SchoolManagement from "@/pages/school-management";
+import SchoolNetworkManagement from "@/pages/school-network-management";
+import CourseManagement from "@/pages/course-management";
 import { ProtectedRoute } from "./lib/protected-route";
 import NotFound from "@/pages/not-found";
 
@@ -31,6 +34,9 @@ function Router() {
       <ProtectedRoute path="/admin/video-conference" component={VideoConference} />
       <ProtectedRoute path="/admin/payments" component={PaymentModule} />
       <ProtectedRoute path="/admin/mobile-app" component={MobileApp} />
+      <ProtectedRoute path="/admin/schools" component={SchoolManagement} />
+      <ProtectedRoute path="/admin/school-networks" component={SchoolNetworkManagement} />
+      <ProtectedRoute path="/admin/courses" component={CourseManagement} />
       <Route path="/landing" component={LandingPage} />
       <Route component={NotFound} />
     </Switch>
