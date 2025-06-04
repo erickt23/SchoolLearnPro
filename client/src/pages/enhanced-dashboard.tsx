@@ -25,7 +25,9 @@ import {
   Upload,
   CheckSquare,
   User,
-  School
+  School,
+  CreditCard,
+  Smartphone
 } from "lucide-react";
 import LanguageSwitcher from "@/components/language-switcher-new";
 import Sidebar from "@/components/layout/sidebar";
