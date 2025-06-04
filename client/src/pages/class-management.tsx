@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useLanguage } from "@/hooks/use-language";
-import { School, Plus, Edit, Trash2, Save, X, ArrowLeft, ChevronUp, ChevronDown, Filter, Download } from "lucide-react";
+import { School, Plus, Edit, Trash2, Save, X, ArrowLeft } from "lucide-react";
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -33,9 +33,6 @@ interface ClassFormData {
   isActive: boolean;
 }
 
-type SortField = 'name' | 'level' | 'academicYear';
-type SortDirection = 'asc' | 'desc';
-
 export default function ClassManagement() {
   const { t } = useLanguage();
   const { toast } = useToast();
@@ -51,20 +48,33 @@ export default function ClassManagement() {
   
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
-  const [sortField, setSortField] = useState<SortField>('name');
-  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
-  const [filterLevel, setFilterLevel] = useState<string>('all');
-  const [filterCycle, setFilterCycle] = useState<string>('all');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
 
   // Fetch classes
-  const { data: classes = [], isLoading } = useQuery<Class[]>({
+  const { data: classes = [], isLoading, error } = useQuery({
     queryKey: ['/api/classes'],
     queryFn: async () => {
       const response = await fetch('/api/classes');
       if (!response.ok) throw new Error('Failed to fetch classes');
+      return response.json();
+    },
+  });
+
+  // Fetch schools for dropdown
+  const { data: schools = [] } = useQuery({
+    queryKey: ['/api/schools'],
+    queryFn: async () => {
+      const response = await fetch('/api/schools');
+      if (!response.ok) throw new Error('Failed to fetch schools');
+      return response.json();
+    },
+  });
+
+  // Fetch users for teacher dropdown
+  const { data: users = [] } = useQuery({
+    queryKey: ['/api/users'],
+    queryFn: async () => {
+      const response = await fetch('/api/users');
+      if (!response.ok) throw new Error('Failed to fetch users');
       return response.json();
     },
   });
@@ -90,7 +100,7 @@ export default function ClassManagement() {
     onError: (error: any) => {
       toast({
         title: t("Erreur", "Erè", "Error"),
-        description: error.message,
+        description: error.message || t("Une erreur est survenue", "Gen yon erè ki fèt", "An error occurred"),
         variant: "destructive"
       });
     }
@@ -119,12 +129,12 @@ export default function ClassManagement() {
 
   const resetForm = () => {
     setFormData({
-      label: '',
-      shortName: '',
-      previousClass: '',
-      cycle: '',
+      name: '',
       level: '',
-      passingGrade: 50
+      schoolId: null,
+      teacherId: null,
+      academicYear: '2024-2025',
+      isActive: true
     });
     setIsEditing(false);
     setEditingId(null);
@@ -132,12 +142,12 @@ export default function ClassManagement() {
 
   const handleEdit = (classItem: Class) => {
     setFormData({
-      label: classItem.label,
-      shortName: classItem.shortName,
-      previousClass: classItem.previousClass || '',
-      cycle: classItem.cycle,
+      name: classItem.name,
       level: classItem.level,
-      passingGrade: classItem.passingGrade
+      schoolId: classItem.schoolId,
+      teacherId: classItem.teacherId,
+      academicYear: classItem.academicYear,
+      isActive: classItem.isActive
     });
     setIsEditing(true);
     setEditingId(classItem.id);
@@ -151,246 +161,148 @@ export default function ClassManagement() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Validation
-    if (!formData.label || !formData.shortName || !formData.cycle || !formData.level) {
+    if (!formData.name.trim() || !formData.level.trim()) {
       toast({
-        title: t("Erreur de validation", "Erè nan validasyon", "Validation error"),
-        description: t("Veuillez remplir tous les champs requis", "Tanpri ranpli tout jaden ki obligatwa yo", "Please fill all required fields"),
+        title: t("Erreur", "Erè", "Error"),
+        description: t("Veuillez remplir tous les champs obligatoires", "Tanpri ranpli tout chan yo ki obligatwa", "Please fill in all required fields"),
         variant: "destructive"
       });
       return;
     }
-
     saveMutation.mutate(formData);
   };
 
-  // Sorting and filtering
-  const handleSort = (field: SortField) => {
-    if (sortField === field) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortField(field);
-      setSortDirection('asc');
-    }
-  };
-
-  const filteredAndSortedClasses = classes
-    .filter(classItem => {
-      const matchesSearch = classItem.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           classItem.shortName.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesLevel = filterLevel === 'all' || classItem.level === filterLevel;
-      const matchesCycle = filterCycle === 'all' || classItem.cycle === filterCycle;
-      return matchesSearch && matchesLevel && matchesCycle;
-    })
-    .sort((a, b) => {
-      let aValue = a[sortField];
-      let bValue = b[sortField];
-      
-      if (typeof aValue === 'string') aValue = aValue.toLowerCase();
-      if (typeof bValue === 'string') bValue = bValue.toLowerCase();
-
-      if (sortDirection === 'asc') {
-        return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
-      } else {
-        return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
-      }
-    });
-
-  const totalPages = Math.ceil(filteredAndSortedClasses.length / itemsPerPage);
-  const paginatedClasses = filteredAndSortedClasses.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
-  const exportToCSV = () => {
-    const headers = [
-      t("Libellé de classe", "Etikèt klas", "Class Label"),
-      t("Nom court", "Non kout", "Short Name"),
-      t("Classe précédente", "Klas anvan an", "Previous Class"),
-      t("Cycle", "Sik", "Cycle"),
-      t("Niveau", "Nivo", "Level"),
-      t("Note de passage", "Nòt pou pase", "Passing Grade")
-    ];
-
-    const csvContent = [
-      headers.join(','),
-      ...filteredAndSortedClasses.map(classItem => [
-        classItem.label,
-        classItem.shortName,
-        classItem.previousClass || 'N/A',
-        classItem.cycle,
-        classItem.level,
-        classItem.passingGrade
-      ].join(','))
-    ].join('\n');
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', 'classes.csv');
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  const SortIcon = ({ field }: { field: SortField }) => {
-    if (sortField !== field) return null;
-    return sortDirection === 'asc' ? 
-      <ChevronUp className="h-4 w-4 ml-1" /> : 
-      <ChevronDown className="h-4 w-4 ml-1" />;
-  };
+  if (isLoading) return <div>{t("Chargement...", "Y ap chaje...", "Loading...")}</div>;
+  if (error) return <div>{t("Erreur de chargement", "Erè nan chajman", "Loading error")}</div>;
 
   return (
-    <div className="container mx-auto p-6">
+    <div className="container mx-auto p-6 space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <Link href="/">
+          <Link to="/dashboard">
             <Button variant="outline" size="sm">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              {t("Retour au tableau de bord", "Tounen nan tablo jesyon", "Back to Dashboard")}
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              {t("Retour", "Tounen", "Back")}
             </Button>
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              {t("Gestion des classes", "Jesyon klas yo", "Class Management")}
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400">
-              {t("Créer et gérer les classes académiques", "Kreye ak jere klas ak akademik yo", "Create and manage academic classes")}
+            <h1 className="text-3xl font-bold">{t("Gestion des Classes", "Jesyon Klas yo", "Class Management")}</h1>
+            <p className="text-muted-foreground">
+              {t("Gérez les classes de votre établissement", "Jere klas yo nan enstitisyon w lan", "Manage your institution's classes")}
             </p>
           </div>
         </div>
-        <Button onClick={exportToCSV} variant="outline">
-          <Download className="h-4 w-4 mr-2" />
-          {t("Exporter CSV", "Ekspòte CSV", "Export CSV")}
-        </Button>
+        <School className="w-8 h-8 text-primary" />
       </div>
 
-      {/* Class Creation Form */}
-      <Card className="mb-6">
+      {/* Form Card */}
+      <Card>
         <CardHeader>
-          <CardTitle className="flex items-center">
-            <School className="h-5 w-5 mr-2" />
+          <CardTitle>
             {isEditing 
-              ? t("Modifier la classe", "Modifye klas la", "Edit Class")
-              : t("Créer une nouvelle classe", "Kreye yon nouvo klas", "Create New Class")
+              ? t("Modifier la Classe", "Modifye Klas la", "Edit Class")
+              : t("Ajouter une Nouvelle Classe", "Ajoute yon Nouvo Klas", "Add New Class")
             }
           </CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="label">
-                  {t("Libellé de classe", "Etikèt klas", "Class Label")} *
-                </Label>
+                <Label htmlFor="name">{t("Nom de la classe", "Non klas la", "Class name")} *</Label>
                 <Input
-                  id="label"
-                  value={formData.label}
-                  onChange={(e) => setFormData({...formData, label: e.target.value})}
-                  placeholder={t("Ex: Sixième Année", "Egz: Sizyèm Ane", "Ex: Sixth Grade")}
+                  id="name"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  placeholder={t("Ex: 6ème A", "Ex: 6yèm A", "Ex: 6th Grade A")}
                   required
                 />
               </div>
-
               <div>
-                <Label htmlFor="shortName">
-                  {t("Nom court", "Non kout", "Short Name")} *
-                </Label>
-                <Input
-                  id="shortName"
-                  value={formData.shortName}
-                  onChange={(e) => setFormData({...formData, shortName: e.target.value})}
-                  placeholder={t("Ex: 6ème AF", "Egz: 6èm AF", "Ex: 6th AF")}
-                  required
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="previousClass">
-                  {t("Classe précédente", "Klas anvan an", "Previous Class")}
-                </Label>
-                <Select value={formData.previousClass} onValueChange={(value) => setFormData({...formData, previousClass: value})}>
+                <Label htmlFor="level">{t("Niveau", "Nivo", "Level")} *</Label>
+                <Select 
+                  value={formData.level} 
+                  onValueChange={(value) => setFormData({ ...formData, level: value })}
+                >
                   <SelectTrigger>
-                    <SelectValue placeholder={t("Choisir classe précédente", "Chwazi klas anvan an", "Choose previous class")} />
+                    <SelectValue placeholder={t("Sélectionner un niveau", "Chwazi yon nivo", "Select a level")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="none">{t("PAS DE CLASSE PRÉCÉDENTE", "PA GEN KLAS ANVAN", "NO PREVIOUS CLASS")}</SelectItem>
-                    {classes.map((classItem) => (
-                      <SelectItem key={classItem.id} value={classItem.label}>
-                        {classItem.label}
+                    <SelectItem value="Préscolaire">{t("Préscolaire", "Preeskòlè", "Preschool")}</SelectItem>
+                    <SelectItem value="Primaire">{t("Primaire", "Primè", "Primary")}</SelectItem>
+                    <SelectItem value="Secondaire">{t("Secondaire", "Segondè", "Secondary")}</SelectItem>
+                    <SelectItem value="Supérieur">{t("Supérieur", "Siperyè", "Higher")}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="schoolId">{t("École", "Lekòl", "School")}</Label>
+                <Select 
+                  value={formData.schoolId?.toString() || "none"} 
+                  onValueChange={(value) => setFormData({ ...formData, schoolId: value === "none" ? null : parseInt(value) })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t("Sélectionner une école", "Chwazi yon lekòl", "Select a school")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">{t("Aucune école", "Pa gen lekòl", "No school")}</SelectItem>
+                    {schools.map((school: any) => (
+                      <SelectItem key={school.id} value={school.id.toString()}>
+                        {school.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
-
               <div>
-                <Label htmlFor="cycle">
-                  {t("Cycle", "Sik", "Cycle")} *
-                </Label>
-                <Select value={formData.cycle} onValueChange={(value) => setFormData({...formData, cycle: value})} required>
+                <Label htmlFor="teacherId">{t("Enseignant principal", "Pwofesè prensipal", "Main teacher")}</Label>
+                <Select 
+                  value={formData.teacherId?.toString() || "none"} 
+                  onValueChange={(value) => setFormData({ ...formData, teacherId: value === "none" ? null : parseInt(value) })}
+                >
                   <SelectTrigger>
-                    <SelectValue placeholder={t("Choisir un cycle", "Chwazi yon sik", "Choose a cycle")} />
+                    <SelectValue placeholder={t("Sélectionner un enseignant", "Chwazi yon pwofesè", "Select a teacher")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="1er Cycle">{t("1er Cycle", "1ye Sik", "1st Cycle")}</SelectItem>
-                    <SelectItem value="2ème Cycle">{t("2ème Cycle", "2èm Sik", "2nd Cycle")}</SelectItem>
-                    <SelectItem value="3ème Cycle">{t("3ème Cycle", "3èm Sik", "3rd Cycle")}</SelectItem>
+                    <SelectItem value="none">{t("Aucun enseignant", "Pa gen pwofesè", "No teacher")}</SelectItem>
+                    {users.filter((user: any) => user.role === 'teacher').map((teacher: any) => (
+                      <SelectItem key={teacher.id} value={teacher.id.toString()}>
+                        {teacher.firstName} {teacher.lastName}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
-              </div>
-
-              <div>
-                <Label htmlFor="level">
-                  {t("Niveau", "Nivo", "Level")} *
-                </Label>
-                <Select value={formData.level} onValueChange={(value) => setFormData({...formData, level: value})} required>
-                  <SelectTrigger>
-                    <SelectValue placeholder={t("Choisir un niveau", "Chwazi yon nivo", "Choose a level")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Préscolaire">{t("Préscolaire", "Preskolè", "Preschool")}</SelectItem>
-                    <SelectItem value="Fondamental">{t("Fondamental", "Fondamantal", "Elementary")}</SelectItem>
-                    <SelectItem value="Secondaire">{t("Secondaire", "Segondè", "Secondary")}</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label htmlFor="passingGrade">
-                  {t("Note de passage", "Nòt pou pase", "Passing Grade")} *
-                </Label>
-                <Input
-                  id="passingGrade"
-                  type="number"
-                  min="0"
-                  max="100"
-                  value={formData.passingGrade}
-                  onChange={(e) => setFormData({...formData, passingGrade: parseInt(e.target.value) || 50})}
-                  required
-                />
               </div>
             </div>
 
-            <div className="flex space-x-2">
-              <Button 
-                type="submit" 
-                disabled={saveMutation.isPending}
-                className="flex items-center"
-              >
-                <Save className="h-4 w-4 mr-2" />
+            <div>
+              <Label htmlFor="academicYear">{t("Année académique", "Ane akademik", "Academic year")} *</Label>
+              <Input
+                id="academicYear"
+                value={formData.academicYear}
+                onChange={(e) => setFormData({ ...formData, academicYear: e.target.value })}
+                placeholder="2024-2025"
+                required
+              />
+            </div>
+
+            <div className="flex items-center space-x-4">
+              <Button type="submit" disabled={saveMutation.isPending}>
+                <Save className="w-4 h-4 mr-2" />
                 {saveMutation.isPending 
-                  ? t("Enregistrement...", "Kap anrejistre...", "Saving...") 
-                  : (isEditing ? t("Modifier", "Modifye", "Update") : t("Créer", "Kreye", "Create"))
+                  ? t("Enregistrement...", "Y ap anrejistre...", "Saving...")
+                  : isEditing 
+                    ? t("Modifier", "Modifye", "Update")
+                    : t("Ajouter", "Ajoute", "Add")
                 }
               </Button>
               {isEditing && (
                 <Button type="button" variant="outline" onClick={resetForm}>
-                  <X className="h-4 w-4 mr-2" />
+                  <X className="w-4 h-4 mr-2" />
                   {t("Annuler", "Anile", "Cancel")}
                 </Button>
               )}
@@ -399,195 +311,66 @@ export default function ClassManagement() {
         </CardContent>
       </Card>
 
-      {/* Filters */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <Filter className="h-5 w-5 mr-2" />
-            {t("Filtres et recherche", "Filtè ak rechèch", "Filters and Search")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Input
-              placeholder={t("Rechercher par libellé...", "Chèche pa etikèt...", "Search by label...")}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <Select value={filterLevel} onValueChange={setFilterLevel}>
-              <SelectTrigger>
-                <SelectValue placeholder={t("Filtrer par niveau", "Filtè pa nivo", "Filter by level")} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{t("Tous les niveaux", "Tout nivo yo", "All levels")}</SelectItem>
-                <SelectItem value="Préscolaire">{t("Préscolaire", "Preskolè", "Preschool")}</SelectItem>
-                <SelectItem value="Fondamental">{t("Fondamental", "Fondamantal", "Elementary")}</SelectItem>
-                <SelectItem value="Secondaire">{t("Secondaire", "Segondè", "Secondary")}</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={filterCycle} onValueChange={setFilterCycle}>
-              <SelectTrigger>
-                <SelectValue placeholder={t("Filtrer par cycle", "Filtè pa sik", "Filter by cycle")} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{t("Tous les cycles", "Tout sik yo", "All cycles")}</SelectItem>
-                <SelectItem value="1er Cycle">{t("1er Cycle", "1ye Sik", "1st Cycle")}</SelectItem>
-                <SelectItem value="2ème Cycle">{t("2èm Cycle", "2èm Sik", "2nd Cycle")}</SelectItem>
-                <SelectItem value="3ème Cycle">{t("3èm Cycle", "3èm Sik", "3rd Cycle")}</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Classes Table */}
+      {/* Classes List */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>
-              {t("Liste des classes", "Lis klas yo", "Class List")}
-            </CardTitle>
-            <div className="text-sm text-gray-600">
-              {t(`Afficher ${(currentPage - 1) * itemsPerPage + 1} à ${Math.min(currentPage * itemsPerPage, filteredAndSortedClasses.length)} (total de ${filteredAndSortedClasses.length})`, 
-                 `Montre ${(currentPage - 1) * itemsPerPage + 1} nan ${Math.min(currentPage * itemsPerPage, filteredAndSortedClasses.length)} (total ${filteredAndSortedClasses.length})`,
-                 `Showing ${(currentPage - 1) * itemsPerPage + 1} to ${Math.min(currentPage * itemsPerPage, filteredAndSortedClasses.length)} (total ${filteredAndSortedClasses.length})`)}
-            </div>
-          </div>
+          <CardTitle>{t("Liste des Classes", "Lis Klas yo", "Classes List")}</CardTitle>
         </CardHeader>
         <CardContent>
-          {isLoading ? (
-            <div className="text-center py-8">
-              {t("Chargement...", "Ap chaje...", "Loading...")}
-            </div>
-          ) : filteredAndSortedClasses.length === 0 ? (
-            <div className="text-center py-8">
-              <School className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-              <p className="text-gray-600">
+          {classes.length === 0 ? (
+            <Alert>
+              <AlertDescription>
                 {t("Aucune classe trouvée", "Pa gen klas yo jwenn", "No classes found")}
-              </p>
-            </div>
+              </AlertDescription>
+            </Alert>
           ) : (
-            <>
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead 
-                        className="cursor-pointer hover:bg-gray-50"
-                        onClick={() => handleSort('label')}
-                      >
-                        <div className="flex items-center">
-                          {t("Libellé", "Etikèt", "Label")}
-                          <SortIcon field="label" />
-                        </div>
-                      </TableHead>
-                      <TableHead 
-                        className="cursor-pointer hover:bg-gray-50"
-                        onClick={() => handleSort('shortName')}
-                      >
-                        <div className="flex items-center">
-                          {t("Nom court", "Non kout", "Short Name")}
-                          <SortIcon field="shortName" />
-                        </div>
-                      </TableHead>
-                      <TableHead>{t("Classe précédente", "Klas anvan an", "Previous Class")}</TableHead>
-                      <TableHead 
-                        className="cursor-pointer hover:bg-gray-50"
-                        onClick={() => handleSort('cycle')}
-                      >
-                        <div className="flex items-center">
-                          {t("Cycle", "Sik", "Cycle")}
-                          <SortIcon field="cycle" />
-                        </div>
-                      </TableHead>
-                      <TableHead 
-                        className="cursor-pointer hover:bg-gray-50"
-                        onClick={() => handleSort('level')}
-                      >
-                        <div className="flex items-center">
-                          {t("Niveau", "Nivo", "Level")}
-                          <SortIcon field="level" />
-                        </div>
-                      </TableHead>
-                      <TableHead 
-                        className="cursor-pointer hover:bg-gray-50"
-                        onClick={() => handleSort('passingGrade')}
-                      >
-                        <div className="flex items-center">
-                          {t("Note de passage", "Nòt pou pase", "Passing Grade")}
-                          <SortIcon field="passingGrade" />
-                        </div>
-                      </TableHead>
-                      <TableHead>{t("Actions", "Aksyon yo", "Actions")}</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {paginatedClasses.map((classItem) => (
-                      <TableRow key={classItem.id}>
-                        <TableCell className="font-medium">{classItem.label}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline">{classItem.shortName}</Badge>
-                        </TableCell>
-                        <TableCell>{classItem.previousClass || t("Aucune", "Okenn", "None")}</TableCell>
-                        <TableCell>
-                          <Badge className="bg-blue-100 text-blue-800">{classItem.cycle}</Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Badge className="bg-green-100 text-green-800">{classItem.level}</Badge>
-                        </TableCell>
-                        <TableCell className="font-medium">{classItem.passingGrade}%</TableCell>
-                        <TableCell>
-                          <div className="flex space-x-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleEdit(classItem)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleDelete(classItem.id)}
-                              className="text-red-600 hover:text-red-700"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-
-              {/* Pagination */}
-              {totalPages > 1 && (
-                <div className="flex items-center justify-between mt-6">
-                  <div className="text-sm text-gray-600">
-                    {t(`Page ${currentPage} sur ${totalPages}`, `Paj ${currentPage} sou ${totalPages}`, `Page ${currentPage} of ${totalPages}`)}
-                  </div>
-                  <div className="flex space-x-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                      disabled={currentPage === 1}
-                    >
-                      {t("Précédent", "Anvan", "Previous")}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                      disabled={currentPage === totalPages}
-                    >
-                      {t("Suivant", "Apre", "Next")}
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{t("Nom", "Non", "Name")}</TableHead>
+                  <TableHead>{t("Niveau", "Nivo", "Level")}</TableHead>
+                  <TableHead>{t("Année académique", "Ane akademik", "Academic Year")}</TableHead>
+                  <TableHead>{t("Statut", "Estatik", "Status")}</TableHead>
+                  <TableHead>{t("Actions", "Aksyon", "Actions")}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {classes.map((classItem: Class) => (
+                  <TableRow key={classItem.id}>
+                    <TableCell className="font-medium">{classItem.name}</TableCell>
+                    <TableCell>{classItem.level}</TableCell>
+                    <TableCell>{classItem.academicYear}</TableCell>
+                    <TableCell>
+                      <Badge variant={classItem.isActive ? "default" : "secondary"}>
+                        {classItem.isActive 
+                          ? t("Actif", "Aktif", "Active")
+                          : t("Inactif", "Inaktif", "Inactive")
+                        }
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex space-x-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEdit(classItem)}
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDelete(classItem.id)}
+                          disabled={deleteMutation.isPending}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           )}
         </CardContent>
       </Card>
