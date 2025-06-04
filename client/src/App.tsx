@@ -12,6 +12,9 @@ import UserManagement from "@/pages/user-management";
 import UsersTable from "@/pages/users-table";
 import BulkImport from "@/pages/bulk-import";
 import ClassManagement from "@/pages/class-management";
+import VideoConference from "@/pages/video-conference";
+import PaymentModule from "@/pages/payment-module";
+import MobileApp from "@/pages/mobile-app";
 import { ProtectedRoute } from "./lib/protected-route";
 import NotFound from "@/pages/not-found";
 
@@ -24,6 +27,8 @@ function Router() {
       <ProtectedRoute path="/admin/user-management" component={UserManagement} />
       <ProtectedRoute path="/admin/bulk-import" component={BulkImport} />
       <ProtectedRoute path="/admin/classes" component={ClassManagement} />
+      <ProtectedRoute path="/admin/video-conference" component={VideoConference} />
+      <ProtectedRoute path="/admin/payments" component={PaymentModule} />
       <Route path="/landing" component={LandingPage} />
       <Route component={NotFound} />
     </Switch>
