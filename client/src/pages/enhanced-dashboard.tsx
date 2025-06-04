@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Switch, Route } from "wouter";
+import { Switch, Route, useLocation, Link } from "wouter";
 import { 
   GraduationCap, 
   Users, 
@@ -62,7 +62,14 @@ function SimpleSidebar({ onClose }: { onClose?: () => void }) {
             isSection: true
           },
           {
-            title: t("Utilisateurs", "Itilizatè yo", "Users"),
+            title: t("Gestion des utilisateurs", "Jesyon itilizatè yo", "Manage Users"),
+            icon: null,
+            path: null,
+            badge: null,
+            isSection: true
+          },
+          {
+            title: t("Liste des utilisateurs", "Lis itilizatè yo", "Users List"),
             icon: Users,
             path: "/admin/users",
             badge: "1,234",
@@ -343,28 +350,30 @@ function SimpleSidebar({ onClose }: { onClose?: () => void }) {
               );
             }
 
+            if (!item.path) return null;
+
             return (
-              <Button
-                key={item.path || index}
-                variant="ghost"
-                className="w-full justify-start text-left hover:bg-gray-100"
-                onClick={() => {
-                  // Navigation logic here
-                  onClose && onClose();
-                }}
-              >
-                <div className="flex items-center justify-between w-full">
-                  <div className="flex items-center">
-                    {item.icon && <item.icon className="mr-3 h-4 w-4" />}
-                    <span>{item.title}</span>
+              <a key={item.path} href={item.path} className="block">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start text-left hover:bg-gray-100 pl-6"
+                  onClick={() => {
+                    onClose && onClose();
+                  }}
+                >
+                  <div className="flex items-center justify-between w-full">
+                    <div className="flex items-center">
+                      {item.icon && <item.icon className="mr-3 h-4 w-4" />}
+                      <span>{item.title}</span>
+                    </div>
+                    {item.badge && (
+                      <Badge variant="secondary" className="ml-auto text-xs">
+                        {item.badge}
+                      </Badge>
+                    )}
                   </div>
-                  {item.badge && (
-                    <Badge variant="secondary" className="ml-auto text-xs">
-                      {item.badge}
-                    </Badge>
-                  )}
-                </div>
-              </Button>
+                </Button>
+              </a>
             );
           })}
         </div>
