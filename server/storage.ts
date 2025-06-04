@@ -1,12 +1,15 @@
 import { 
   users, students, classes, subjects, grades, attendance, 
   courses, assignments, submissions, messages, schools, schoolNetworks,
+  teachers, parents, teacherCourses, parentStudents,
   type User, type InsertUser, type Student, type InsertStudent,
   type Class, type InsertClass, type Subject, type InsertSubject,
   type Grade, type InsertGrade, type Attendance, type InsertAttendance,
   type Course, type InsertCourse, type Assignment, type InsertAssignment,
   type Submission, type InsertSubmission, type Message, type InsertMessage,
-  type School, type InsertSchool, type SchoolNetwork, type InsertSchoolNetwork
+  type School, type InsertSchool, type SchoolNetwork, type InsertSchoolNetwork,
+  type Teacher, type InsertTeacher, type Parent, type InsertParent,
+  type TeacherCourse, type ParentStudent
 } from "@shared/schema";
 import { db, pool } from "./db";
 import { eq, and, desc, asc } from "drizzle-orm";
@@ -393,6 +396,118 @@ export class DatabaseStorage implements IStorage {
       .where(eq(messages.id, id))
       .returning();
     return message || undefined;
+  }
+
+  // Teacher management methods
+  async getTeachers(): Promise<Teacher[]> {
+    return await db.select().from(teachers);
+  }
+
+  async getTeacher(id: number): Promise<Teacher | undefined> {
+    const [teacher] = await db.select().from(teachers).where(eq(teachers.id, id));
+    return teacher || undefined;
+  }
+
+  async getTeacherByUserId(userId: number): Promise<Teacher | undefined> {
+    const [teacher] = await db.select().from(teachers).where(eq(teachers.userId, userId));
+    return teacher || undefined;
+  }
+
+  async createTeacher(teacher: InsertTeacher): Promise<Teacher> {
+    const [newTeacher] = await db
+      .insert(teachers)
+      .values(teacher)
+      .returning();
+    return newTeacher;
+  }
+
+  async updateTeacher(id: number, teacherData: Partial<InsertTeacher>): Promise<Teacher | undefined> {
+    const [teacher] = await db
+      .update(teachers)
+      .set(teacherData)
+      .where(eq(teachers.id, id))
+      .returning();
+    return teacher || undefined;
+  }
+
+  // Parent management methods
+  async getParents(): Promise<Parent[]> {
+    return await db.select().from(parents);
+  }
+
+  async getParent(id: number): Promise<Parent | undefined> {
+    const [parent] = await db.select().from(parents).where(eq(parents.id, id));
+    return parent || undefined;
+  }
+
+  async getParentByUserId(userId: number): Promise<Parent | undefined> {
+    const [parent] = await db.select().from(parents).where(eq(parents.userId, userId));
+    return parent || undefined;
+  }
+
+  async createParent(parent: InsertParent): Promise<Parent> {
+    const [newParent] = await db
+      .insert(parents)
+      .values(parent)
+      .returning();
+    return newParent;
+  }
+
+  async updateParent(id: number, parentData: Partial<InsertParent>): Promise<Parent | undefined> {
+    const [parent] = await db
+      .update(parents)
+      .set(parentData)
+      .where(eq(parents.id, id))
+      .returning();
+    return parent || undefined;
+  }
+
+  // Teacher-Course relationship methods
+  async getTeacherCourses(teacherId: number): Promise<TeacherCourse[]> {
+    return await db.select().from(teacherCourses).where(eq(teacherCourses.teacherId, teacherId));
+  }
+
+  async assignCourseToTeacher(teacherId: number, courseId: number): Promise<TeacherCourse> {
+    const [assignment] = await db
+      .insert(teacherCourses)
+      .values({ teacherId, courseId })
+      .returning();
+    return assignment;
+  }
+
+  async removeCourseFromTeacher(teacherId: number, courseId: number): Promise<void> {
+    await db
+      .delete(teacherCourses)
+      .where(
+        and(
+          eq(teacherCourses.teacherId, teacherId),
+          eq(teacherCourses.courseId, courseId)
+        )
+      );
+  }
+
+  // Parent-Student relationship methods
+  async getParentStudents(parentId: number): Promise<ParentStudent[]> {
+    return await db.select().from(parentStudents).where(eq(parentStudents.parentId, parentId));
+  }
+
+  async assignStudentToParent(parentId: number, studentId: number): Promise<ParentStudent> {
+    const [assignment] = await db
+      .insert(parentStudents)
+      .values({ parentId, studentId })
+      .returning();
+    return assignment;
+  }
+
+  async removeStudentFromParent(parentId: number, studentId: number): Promise<void> {
+    await db
+      .delete(parentStudents)
+      .where(
+        and(
+          eq(parentStudents.parentId, parentId),
+          eq(parentStudents.studentId, studentId)
+        )
+      );
   }
 }
 

@@ -14,7 +14,7 @@ export default function UserManagement() {
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState("students");
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedUser, setSelectedUser] = useState<any>(undefined);
   const [isCreating, setIsCreating] = useState(false);
 
   // Sample data - in real implementation, this would come from API
