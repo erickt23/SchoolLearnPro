@@ -547,14 +547,14 @@ export default function SchoolManagement() {
                 <div>
                   <Label htmlFor="schoolNetworkId">{t("Réseau scolaire", "Rezo lekòl", "School Network")}</Label>
                   <Select 
-                    value={formData.schoolNetworkId?.toString() || ""} 
-                    onValueChange={(value) => setFormData({ ...formData, schoolNetworkId: value ? parseInt(value) : null })}
+                    value={formData.schoolNetworkId?.toString() || "none"} 
+                    onValueChange={(value) => setFormData({ ...formData, schoolNetworkId: value === "none" ? null : parseInt(value) })}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder={t("Sélectionner un réseau", "Chwazi yon rezo", "Select a network")} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">{t("École indépendante", "Lekòl endepandan", "Independent school")}</SelectItem>
+                      <SelectItem value="none">{t("École indépendante", "Lekòl endepandan", "Independent school")}</SelectItem>
                       {networks.map((network) => (
                         <SelectItem key={network.id} value={network.id.toString()}>
                           {network.name}

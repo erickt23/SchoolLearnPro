@@ -566,14 +566,14 @@ export default function CourseManagement() {
                   <div>
                     <Label htmlFor="classId">{t("Classe", "Klas", "Class")}</Label>
                     <Select 
-                      value={formData.classId?.toString() || ""} 
-                      onValueChange={(value) => setFormData({ ...formData, classId: value ? parseInt(value) : null })}
+                      value={formData.classId?.toString() || "none"} 
+                      onValueChange={(value) => setFormData({ ...formData, classId: value === "none" ? null : parseInt(value) })}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder={t("Sélectionner une classe", "Chwazi yon klas", "Select a class")} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">{t("Tous niveaux", "Tout nivo yo", "All levels")}</SelectItem>
+                        <SelectItem value="none">{t("Tous niveaux", "Tout nivo yo", "All levels")}</SelectItem>
                         {classes.map((classItem) => (
                           <SelectItem key={classItem.id} value={classItem.id.toString()}>
                             {classItem.name}
@@ -585,14 +585,14 @@ export default function CourseManagement() {
                   <div>
                     <Label htmlFor="teacherId">{t("Enseignant", "Pwofesè", "Teacher")}</Label>
                     <Select 
-                      value={formData.teacherId?.toString() || ""} 
-                      onValueChange={(value) => setFormData({ ...formData, teacherId: value ? parseInt(value) : null })}
+                      value={formData.teacherId?.toString() || "none"} 
+                      onValueChange={(value) => setFormData({ ...formData, teacherId: value === "none" ? null : parseInt(value) })}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder={t("Sélectionner un enseignant", "Chwazi yon pwofesè", "Select a teacher")} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">{t("Non assigné", "Pa asiyen", "Unassigned")}</SelectItem>
+                        <SelectItem value="none">{t("Non assigné", "Pa asiyen", "Unassigned")}</SelectItem>
                         {teachers.map((teacher) => (
                           <SelectItem key={teacher.id} value={teacher.id.toString()}>
                             Teacher {teacher.id}
