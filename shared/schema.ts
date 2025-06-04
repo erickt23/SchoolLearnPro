@@ -59,9 +59,45 @@ export const students = pgTable("students", {
   userId: integer("user_id").references(() => users.id).notNull(),
   classId: integer("class_id").references(() => classes.id),
   enrollmentDate: timestamp("enrollment_date").defaultNow(),
-  studentId: text("student_id").unique(), // Custom student ID
+  studentId: text("student_id").unique().notNull(), // Custom student ID
   emergencyContact: text("emergency_contact"),
   emergencyPhone: text("emergency_phone"),
+  room: text("room"),
+  age: integer("age"),
+});
+
+// Teachers table (extends users with teacher-specific info)
+export const teachers = pgTable("teachers", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  staffId: text("staff_id").unique().notNull(), // Custom staff ID
+  emergencyContact: text("emergency_contact"),
+  emergencyPhone: text("emergency_phone"),
+  department: text("department"),
+  hireDate: timestamp("hire_date").defaultNow(),
+});
+
+// Parents table (extends users with parent-specific info)
+export const parents = pgTable("parents", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  parentId: text("parent_id").unique().notNull(), // Custom parent ID
+  emergencyPhone: text("emergency_phone"),
+  relationship: text("relationship"), // father, mother, guardian, etc.
+});
+
+// Teacher-Course assignments (many-to-many)
+export const teacherCourses = pgTable("teacher_courses", {
+  id: serial("id").primaryKey(),
+  teacherId: integer("teacher_id").references(() => teachers.id).notNull(),
+  courseId: integer("course_id").references(() => courses.id).notNull(),
+});
+
+// Parent-Student relationships (many-to-many)
+export const parentStudents = pgTable("parent_students", {
+  id: serial("id").primaryKey(),
+  parentId: integer("parent_id").references(() => parents.id).notNull(),
+  studentId: integer("student_id").references(() => students.id).notNull(),
 });
 
 // Subjects table
@@ -205,6 +241,45 @@ export const studentsRelations = relations(students, ({ one, many }) => ({
   grades: many(grades),
   attendance: many(attendance),
   submissions: many(submissions),
+  parentStudents: many(parentStudents),
+}));
+
+export const teachersRelations = relations(teachers, ({ one, many }) => ({
+  user: one(users, {
+    fields: [teachers.userId],
+    references: [users.id],
+  }),
+  teacherCourses: many(teacherCourses),
+}));
+
+export const parentsRelations = relations(parents, ({ one, many }) => ({
+  user: one(users, {
+    fields: [parents.userId],
+    references: [users.id],
+  }),
+  parentStudents: many(parentStudents),
+}));
+
+export const teacherCoursesRelations = relations(teacherCourses, ({ one }) => ({
+  teacher: one(teachers, {
+    fields: [teacherCourses.teacherId],
+    references: [teachers.id],
+  }),
+  course: one(courses, {
+    fields: [teacherCourses.courseId],
+    references: [courses.id],
+  }),
+}));
+
+export const parentStudentsRelations = relations(parentStudents, ({ one }) => ({
+  parent: one(parents, {
+    fields: [parentStudents.parentId],
+    references: [parents.id],
+  }),
+  student: one(students, {
+    fields: [parentStudents.studentId],
+    references: [students.id],
+  }),
 }));
 
 export const classesRelations = relations(classes, ({ one, many }) => ({
@@ -318,6 +393,23 @@ export const insertSchoolSchema = createInsertSchema(schools).omit({
   createdAt: true,
 });
 
+export const insertTeacherSchema = createInsertSchema(teachers).omit({
+  id: true,
+  hireDate: true,
+});
+
+export const insertParentSchema = createInsertSchema(parents).omit({
+  id: true,
+});
+
+export const insertTeacherCourseSchema = createInsertSchema(teacherCourses).omit({
+  id: true,
+});
+
+export const insertParentStudentSchema = createInsertSchema(parentStudents).omit({
+  id: true,
+});
+
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -343,3 +435,11 @@ export type Submission = typeof submissions.$inferSelect;
 export type InsertSubmission = z.infer<typeof insertSubmissionSchema>;
 export type Message = typeof messages.$inferSelect;
 export type InsertMessage = z.infer<typeof insertMessageSchema>;
+export type Teacher = typeof teachers.$inferSelect;
+export type InsertTeacher = z.infer<typeof insertTeacherSchema>;
+export type Parent = typeof parents.$inferSelect;
+export type InsertParent = z.infer<typeof insertParentSchema>;
+export type TeacherCourse = typeof teacherCourses.$inferSelect;
+export type InsertTeacherCourse = z.infer<typeof insertTeacherCourseSchema>;
+export type ParentStudent = typeof parentStudents.$inferSelect;
+export type InsertParentStudent = z.infer<typeof insertParentStudentSchema>;

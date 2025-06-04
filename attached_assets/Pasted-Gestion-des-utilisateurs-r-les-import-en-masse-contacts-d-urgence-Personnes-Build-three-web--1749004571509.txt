@@ -1,0 +1,115 @@
+Gestion des utilisateurs : rôles, import en masse, contacts d’urgence
+-	Personnes
+Build three web-based contact interfaces (Student, Teacher, Parent) using React and Spring Boot with identical UI styling to the reference image.
+1. Student Interface
+Header: # Student Details
+•	Form Fields:
+•	First Name (text input)
+•	Last Name (text input)
+•	Email Address (email input)
+•	Student ID (numeric input)
+•	Emergency Contact (text input)
+•	Phone Number (tel input)
+•	Class (dropdown)
+•	Room (dropdown)
+•	Age (numeric input)
+•	Footer Buttons: Edit | Delete
+2. Teacher/Staff Interface
+Header: # Staff Details
+•	Form Fields:
+•	First Name (text input)
+•	Last Name (text input)
+•	Staff ID (numeric input)
+•	Emergency Contact (text input)
+•	Phone Number (tel input)
+•	Email Address (email input)
+•	Courses (multi-select dropdown)
+•	Footer Buttons: Edit | Delete
+3. Parent Interface
+Header: # Parent Details
+•	Form Fields:
+•	First Name (text input)
+•	Last Name (text input)
+•	Parent ID (numeric input)
+•	Phone Number (tel input)
+•	Email Address (email input)
+•	Student(s) (multi-select dropdown with student names)
+•	Footer Buttons: Edit | Delete
+
+
+
+
+Shared Technical Requirements
+Frontend (React):
+1.	UI Components:
+o	MatCard for the container
+o	MatFormField for inputs
+o	MatSelect for dropdowns
+o	MatButton for actions
+o	Identical styling to reference image (blue header, clean layout)
+2.	Features:
+o	Responsive design
+o	Form validation
+o	Photo placeholder (optional)
+Backend (Spring Boot)
+
+// Student Entity
+@Entity class Student {
+    Long id;
+    String firstName;
+    String lastName;
+    String email;
+    String studentId;
+    String emergencyContact;
+    String phone;
+    String classGroup;
+    String room;
+    Integer age;
+}
+
+// Teacher Entity
+@Entity class Teacher {
+    Long id;
+    String firstName;
+    String lastName;
+    String staffId;
+    String emergencyContact;
+    String phone;
+    String email;
+    @ManyToMany List<Course> courses;
+}
+
+// Parent Entity 
+@Entity class Parent {
+    Long id;
+    String firstName;
+    String lastName;
+    String parentId;
+    String phone;
+    String email;
+    @ManyToMany List<Student> children;
+}
+
+Endpoints (for each interface):
+•	GET /api/{entity} → Get all
+•	GET /api/{entity}/{id} → Get single
+•	POST /api/{entity} → Create
+•	PUT /api/{entity}/{id} → Update
+•	DELETE /api/{entity}/{id} → Delete
+i18n Support:
+•	French (default)
+•	English
+•	Haitian Creole
+•	All labels/buttons translated
+
+Additional Requirements:
+1.	Maintain identical visual hierarchy from reference:
+o	Bold section headers
+o	Label-value pairs
+o	Horizontal divider
+o	Right-aligned action buttons
+2.	Include identical "Notes" section with placeholder text
+3.	Implement search functionality for:
+o	Student/teacher/parent lookup
+o	Classroom/course assignments
+4.	Add export capability (PDF/CSV)
