@@ -38,7 +38,7 @@ import LiveSession from "@/components/elearning/live-session";
 import QuizInterface from "@/components/elearning/quiz-interface";
 
 // Composant SimpleSidebar intégré
-function SimpleSidebar({ onClose }: { onClose?: () => void }) {
+function SimpleSidebar({ onClose, isCollapsed, onToggleCollapse }: { onClose?: () => void, isCollapsed?: boolean, onToggleCollapse?: () => void }) {
   const { user, logoutMutation } = useAuth();
   const { t } = useLanguage();
 
@@ -430,7 +430,12 @@ function SimpleSidebar({ onClose }: { onClose?: () => void }) {
   );
 }
 
-function DashboardHome() {
+function DashboardHome({ useSidebarMode, setUseSidebarMode, showKalitekSidebar, setShowKalitekSidebar }: {
+  useSidebarMode: boolean;
+  setUseSidebarMode: (value: boolean) => void;
+  showKalitekSidebar: boolean;
+  setShowKalitekSidebar: (value: boolean) => void;
+}) {
   const { user } = useAuth();
   const { t } = useLanguage();
 
@@ -637,11 +642,34 @@ function DashboardHome() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header with Language Switcher */}
-      <header className="bg-white shadow-sm border-b">
+      {/* Header with improved navbar */}
+      <header className="bg-white shadow-sm border-b sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
+            <div className="flex items-center space-x-4">
+              {/* Mobile Sidebar Toggle */}
+              <Button
+                variant="ghost"
+                size="sm"
+                className="lg:hidden"
+                onClick={() => setShowKalitekSidebar(!showKalitekSidebar)}
+              >
+                <Menu className="h-5 w-5" />
+              </Button>
+              
+              {/* Mode avancé toggle button */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setUseSidebarMode(!useSidebarMode)}
+                className="flex items-center gap-2 text-blue-600 hover:bg-blue-50 border-blue-200"
+              >
+                <Settings className="h-4 w-4" />
+                <span className="hidden sm:inline">
+                  {t("Mode avancé", "Mòd avanse", "Advanced Mode")}
+                </span>
+              </Button>
+              
               <div>
                 <h1 className="text-xl font-bold text-gray-900">
                   {t("Tableau de bord", "Tablo jesyon", "Dashboard")}
@@ -649,14 +677,24 @@ function DashboardHome() {
               </div>
             </div>
 
-            <div className="flex items-center space-x-4">
-              <LanguageSwitcher />
-              <Button variant="ghost" size="sm">
+            <div className="flex items-center space-x-3">
+              {/* Language and Theme toggles */}
+              <div className="flex items-center space-x-2">
+                <LanguageSwitcher />
+                <ThemeToggle />
+              </div>
+              
+              {/* Notifications */}
+              <Button variant="ghost" size="sm" className="relative">
                 <Bell className="h-5 w-5" />
+                <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 rounded-full text-xs text-white flex items-center justify-center">
+                  3
+                </span>
               </Button>
               
-              <div className="flex items-center space-x-3">
-                <div className="text-right">
+              {/* User profile */}
+              <div className="flex items-center space-x-3 pl-3 border-l border-gray-200">
+                <div className="text-right hidden sm:block">
                   <p className="text-sm font-medium text-gray-900">
                     {user?.firstName} {user?.lastName}
                   </p>
@@ -868,14 +906,26 @@ export default function EnhancedDashboard() {
           </div>
           
           <Switch>
-            <Route path="/" component={DashboardHome} />
+            <Route path="/">
+              <DashboardHome 
+                useSidebarMode={useSidebarMode}
+                setUseSidebarMode={setUseSidebarMode}
+                showKalitekSidebar={showKalitekSidebar}
+                setShowKalitekSidebar={setShowKalitekSidebar}
+              />
+            </Route>
             <Route path="/teacher/create-course" component={CourseCreation} />
             <Route path="/teacher/live-sessions" component={LiveSession} />
             <Route path="/student/courses" component={StudentDashboard} />
             <Route path="/student/quiz/:id" component={QuizInterface} />
             <Route path="/live-session/:id" component={LiveSession} />
             <Route>
-              <DashboardHome />
+              <DashboardHome 
+                useSidebarMode={useSidebarMode}
+                setUseSidebarMode={setUseSidebarMode}
+                showKalitekSidebar={showKalitekSidebar}
+                setShowKalitekSidebar={setShowKalitekSidebar}
+              />
             </Route>
           </Switch>
         </div>
