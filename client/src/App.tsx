@@ -29,6 +29,7 @@ function Router() {
       <ProtectedRoute path="/admin/classes" component={ClassManagement} />
       <ProtectedRoute path="/admin/video-conference" component={VideoConference} />
       <ProtectedRoute path="/admin/payments" component={PaymentModule} />
+      <ProtectedRoute path="/admin/mobile-app" component={MobileApp} />
       <Route path="/landing" component={LandingPage} />
       <Route component={NotFound} />
     </Switch>

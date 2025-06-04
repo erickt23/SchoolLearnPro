@@ -186,7 +186,7 @@ export default function MobileApp() {
                 <CardTitle className="text-sm font-medium">
                   {t("Dernière MAJ", "Dènye MAJ", "Last Update")}
                 </CardTitle>
-                <Sync className="h-4 w-4 text-muted-foreground" />
+                <RefreshCw className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">v1.2.1</div>
@@ -293,7 +293,7 @@ export default function MobileApp() {
                         <Eye className="h-4 w-4" />
                       </Button>
                       <Button variant="outline" size="sm">
-                        <Sync className="h-4 w-4" />
+                        <RefreshCw className="h-4 w-4" />
                       </Button>
                     </div>
                   </div>

@@ -90,6 +90,34 @@ function SimpleSidebar({ onClose }: { onClose?: () => void }) {
             isSection: false
           },
           {
+            title: t("E-Learning", "E-Learning", "E-Learning"),
+            icon: null,
+            path: null,
+            badge: null,
+            isSection: true
+          },
+          {
+            title: t("Visioconférence", "Videokominikasyon", "Video Conference"),
+            icon: Video,
+            path: "/admin/video-conference",
+            badge: "Live",
+            isSection: false
+          },
+          {
+            title: t("Paiements", "Peman yo", "Payments"),
+            icon: CreditCard,
+            path: "/admin/payments",
+            badge: "156",
+            isSection: false
+          },
+          {
+            title: t("App Mobile", "App Mobil", "Mobile App"),
+            icon: Smartphone,
+            path: "/admin/mobile-app",
+            badge: "1.2.1",
+            isSection: false
+          },
+          {
             title: t("Écoles", "Lekòl yo", "Schools"),
             icon: GraduationCap,
             path: "/admin/schools",
