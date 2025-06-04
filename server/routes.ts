@@ -144,11 +144,17 @@ export function registerRoutes(app: Express): Server {
 
   app.post("/api/classes", requireAuth, requireRole(["admin"]), async (req, res) => {
     try {
+      console.log("Received class data:", req.body);
       const classData = insertClassSchema.parse(req.body);
       const newClass = await storage.createClass(classData);
       res.status(201).json(newClass);
     } catch (error) {
-      res.status(400).json({ message: "Invalid class data" });
+      console.error("Class creation error:", error);
+      if (error instanceof Error) {
+        res.status(400).json({ message: error.message });
+      } else {
+        res.status(400).json({ message: "Invalid class data" });
+      }
     }
   });
 

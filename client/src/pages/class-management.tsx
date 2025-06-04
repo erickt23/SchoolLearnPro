@@ -16,25 +16,24 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 
 interface Class {
   id: number;
-  label: string;
-  shortName: string;
-  previousClass: string | null;
-  cycle: string;
+  name: string;
   level: string;
-  passingGrade: number;
-  createdAt: string;
+  schoolId: number | null;
+  teacherId: number | null;
+  academicYear: string;
+  isActive: boolean;
 }
 
 interface ClassFormData {
-  label: string;
-  shortName: string;
-  previousClass: string;
-  cycle: string;
+  name: string;
   level: string;
-  passingGrade: number;
+  schoolId: number | null;
+  teacherId: number | null;
+  academicYear: string;
+  isActive: boolean;
 }
 
-type SortField = 'label' | 'shortName' | 'cycle' | 'level' | 'passingGrade';
+type SortField = 'name' | 'level' | 'academicYear';
 type SortDirection = 'asc' | 'desc';
 
 export default function ClassManagement() {
@@ -42,17 +41,17 @@ export default function ClassManagement() {
   const { toast } = useToast();
   
   const [formData, setFormData] = useState<ClassFormData>({
-    label: '',
-    shortName: '',
-    previousClass: '',
-    cycle: '',
+    name: '',
     level: '',
-    passingGrade: 50
+    schoolId: null,
+    teacherId: null,
+    academicYear: '2024-2025',
+    isActive: true
   });
   
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
-  const [sortField, setSortField] = useState<SortField>('label');
+  const [sortField, setSortField] = useState<SortField>('name');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   const [filterLevel, setFilterLevel] = useState<string>('all');
   const [filterCycle, setFilterCycle] = useState<string>('all');
