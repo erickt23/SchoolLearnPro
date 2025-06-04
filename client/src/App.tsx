@@ -8,7 +8,7 @@ import { LanguageProvider } from "./hooks/use-language";
 import { ThemeProvider } from "./hooks/use-theme";
 import LandingPage from "@/pages/landing-page-fixed";
 import AuthPage from "@/pages/auth-page-fixed";
-import EnhancedDashboard from "@/pages/enhanced-dashboard";
+import MainDashboard from "@/pages/main-dashboard";
 import UserManagement from "@/pages/user-management";
 import UsersTable from "@/pages/users-table";
 import BulkImport from "@/pages/bulk-import";
@@ -26,17 +26,15 @@ function Router() {
   return (
     <Switch>
       <Route path="/auth" component={AuthPage} />
-      <ProtectedRoute path="/" component={EnhancedDashboard} />
-      <ProtectedRoute path="/admin/users" component={UsersTable} />
-      <ProtectedRoute path="/admin/user-management" component={UserManagement} />
-      <ProtectedRoute path="/admin/bulk-import" component={BulkImport} />
-      <ProtectedRoute path="/admin/classes" component={ClassManagement} />
-      <ProtectedRoute path="/admin/video-conference" component={VideoConference} />
-      <ProtectedRoute path="/admin/payments" component={PaymentModule} />
-      <ProtectedRoute path="/admin/mobile-app" component={MobileApp} />
-      <ProtectedRoute path="/admin/schools" component={SchoolManagement} />
-      <ProtectedRoute path="/admin/school-networks" component={SchoolNetworkManagement} />
-      <ProtectedRoute path="/admin/courses" component={CourseManagement} />
+      <ProtectedRoute path="/" component={MainDashboard} />
+      <ProtectedRoute path="/user-management" component={UserManagement} />
+      <ProtectedRoute path="/school-management" component={SchoolManagement} />
+      <ProtectedRoute path="/class-management" component={ClassManagement} />
+      <ProtectedRoute path="/course-management" component={CourseManagement} />
+      <ProtectedRoute path="/video-conference" component={VideoConference} />
+      <ProtectedRoute path="/payment-module" component={PaymentModule} />
+      <ProtectedRoute path="/mobile-app" component={MobileApp} />
+      <ProtectedRoute path="/bulk-import" component={BulkImport} />
       <Route path="/landing" component={LandingPage} />
       <Route component={NotFound} />
     </Switch>

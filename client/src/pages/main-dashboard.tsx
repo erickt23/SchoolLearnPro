@@ -1,12 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useLanguage } from "@/hooks/use-language";
-import { Switch, Route } from "wouter";
-import Sidebar from "@/components/layout/sidebar";
-import CourseCreation from "@/components/elearning/course-creation";
-import StudentDashboard from "@/components/elearning/student-dashboard";
-import LiveSession from "@/components/elearning/live-session";
-import QuizInterface from "@/components/elearning/quiz-interface";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -20,14 +14,280 @@ import {
   ClipboardList,
   Settings,
   Bell,
+  Menu,
+  X,
   TrendingUp,
   Award,
-  Clock
+  Clock,
+  Video,
+  Upload,
+  CheckSquare,
+  User,
+  School,
+  CreditCard,
+  Smartphone,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
+import LanguageSwitcher from "@/components/language-switcher-new";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { Link } from "wouter";
 
-function DashboardHome() {
+// Sidebar Component
+function CollapsibleSidebar({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () => void }) {
+  const { user, logoutMutation } = useAuth();
+  const { t } = useLanguage();
+
+  const getMenuItems = () => {
+    const baseItems = [
+      {
+        title: t("Tableau de bord", "Tablo jesyon", "Dashboard"),
+        icon: BarChart3,
+        path: "/dashboard",
+        badge: null,
+        isSection: false
+      }
+    ];
+
+    switch (user?.role) {
+      case 'admin':
+        return [
+          ...baseItems,
+          {
+            title: t("Gestion", "Jesyon", "Management"),
+            icon: null,
+            path: null,
+            badge: null,
+            isSection: true
+          },
+          {
+            title: t("Utilisateurs", "Itilizatè yo", "Users"),
+            icon: Users,
+            path: "/user-management",
+            badge: "1,234",
+            isSection: false
+          },
+          {
+            title: t("Écoles", "Lekòl yo", "Schools"),
+            icon: School,
+            path: "/school-management",
+            badge: "45",
+            isSection: false
+          },
+          {
+            title: t("Classes", "Klas yo", "Classes"),
+            icon: BookOpen,
+            path: "/class-management",
+            badge: "156",
+            isSection: false
+          },
+          {
+            title: t("Cours", "Kou yo", "Courses"),
+            icon: Upload,
+            path: "/course-management",
+            badge: "89",
+            isSection: false
+          },
+          {
+            title: t("Modules", "Modil yo", "Modules"),
+            icon: null,
+            path: null,
+            badge: null,
+            isSection: true
+          },
+          {
+            title: t("Vidéoconférence", "Videokonferans", "Video Conference"),
+            icon: Video,
+            path: "/video-conference",
+            badge: "Live",
+            isSection: false
+          },
+          {
+            title: t("Paiements", "Peman yo", "Payments"),
+            icon: CreditCard,
+            path: "/payment-module",
+            badge: "€2,450",
+            isSection: false
+          },
+          {
+            title: t("App Mobile", "App Mobil", "Mobile App"),
+            icon: Smartphone,
+            path: "/mobile-app",
+            badge: "Beta",
+            isSection: false
+          }
+        ];
+      case 'teacher':
+        return [
+          ...baseItems,
+          {
+            title: t("Enseignement", "Ansèyman", "Teaching"),
+            icon: null,
+            path: null,
+            badge: null,
+            isSection: true
+          },
+          {
+            title: t("Mes cours", "Kou mwen yo", "My Courses"),
+            icon: BookOpen,
+            path: "/teacher/courses",
+            badge: "12",
+            isSection: false
+          },
+          {
+            title: t("Étudiants", "Elèv yo", "Students"),
+            icon: Users,
+            path: "/teacher/students",
+            badge: "156",
+            isSection: false
+          },
+          {
+            title: t("Planning", "Planifikasyon", "Schedule"),
+            icon: Calendar,
+            path: "/teacher/schedule",
+            badge: null,
+            isSection: false
+          }
+        ];
+      case 'student':
+        return [
+          ...baseItems,
+          {
+            title: t("Apprentissage", "Aprantisaj", "Learning"),
+            icon: null,
+            path: null,
+            badge: null,
+            isSection: true
+          },
+          {
+            title: t("Mes cours", "Kou mwen yo", "My Courses"),
+            icon: BookOpen,
+            path: "/student/courses",
+            badge: "8",
+            isSection: false
+          },
+          {
+            title: t("Devoirs", "Devoir yo", "Assignments"),
+            icon: ClipboardList,
+            path: "/student/assignments",
+            badge: "3",
+            isSection: false
+          }
+        ];
+      default:
+        return baseItems;
+    }
+  };
+
+  const menuItems = getMenuItems();
+
+  return (
+    <div className={`bg-white border-r border-gray-200 h-full flex flex-col transition-all duration-300 ${isCollapsed ? 'w-16' : 'w-64'}`}>
+      {/* Header with toggle */}
+      <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+        {!isCollapsed && (
+          <div className="flex items-center">
+            <GraduationCap className="h-8 w-8 text-primary mr-2" />
+            <h1 className="text-xl font-bold text-primary">EduPro</h1>
+          </div>
+        )}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onToggle}
+          className="p-2"
+        >
+          {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+        </Button>
+      </div>
+
+      {/* User Info */}
+      {!isCollapsed && (
+        <div className="p-4 border-b border-gray-200">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+              <User className="h-5 w-5 text-blue-600" />
+            </div>
+            <div>
+              <p className="font-medium text-sm">{user?.firstName} {user?.lastName}</p>
+              <p className="text-xs text-gray-500 capitalize">{user?.role}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Navigation */}
+      <nav className="flex-1 p-4 overflow-y-auto">
+        <div className="space-y-1">
+          {menuItems.map((item, index) => {
+            if (item.isSection) {
+              if (isCollapsed) return null;
+              return (
+                <div key={index} className="mt-6 first:mt-0">
+                  <div className="px-3 py-2">
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                      {item.title}
+                    </p>
+                  </div>
+                </div>
+              );
+            }
+
+            if (!item.path) return null;
+
+            return (
+              <Link key={item.path} href={item.path}>
+                <Button
+                  variant="ghost"
+                  className={`w-full justify-start text-left hover:bg-gray-100 ${isCollapsed ? 'px-2' : 'pl-6'}`}
+                >
+                  <div className="flex items-center justify-between w-full">
+                    <div className="flex items-center">
+                      {item.icon && <item.icon className={`h-4 w-4 ${isCollapsed ? '' : 'mr-3'}`} />}
+                      {!isCollapsed && <span>{item.title}</span>}
+                    </div>
+                    {!isCollapsed && item.badge && (
+                      <Badge variant="secondary" className="text-xs">
+                        {item.badge}
+                      </Badge>
+                    )}
+                  </div>
+                </Button>
+              </Link>
+            );
+          })}
+        </div>
+      </nav>
+
+      {/* Logout button */}
+      <div className="p-4 border-t border-gray-200">
+        <Button
+          variant="outline"
+          onClick={() => logoutMutation.mutate()}
+          className={`w-full ${isCollapsed ? 'px-2' : ''}`}
+        >
+          <X className={`h-4 w-4 ${isCollapsed ? '' : 'mr-2'}`} />
+          {!isCollapsed && t("Déconnexion", "Dekonekte", "Logout")}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+// Main Dashboard Content
+function DashboardContent() {
   const { user } = useAuth();
   const { t } = useLanguage();
+
+  const getRoleLabel = (role: string) => {
+    switch (role) {
+      case "admin": return t("Administrateur", "Administratè", "Administrator");
+      case "teacher": return t("Enseignant", "Pwofesè", "Teacher");
+      case "student": return t("Élève", "Elèv", "Student");
+      case "parent": return t("Parent", "Paran", "Parent");
+      default: return role;
+    }
+  };
 
   const getDashboardStats = () => {
     switch (user?.role) {
@@ -73,52 +333,52 @@ function DashboardHome() {
           },
           {
             title: t("Total étudiants", "Total elèv yo", "Total Students"),
-            value: "345",
-            change: "+15",
+            value: "156",
+            change: "+8",
             icon: Users,
             color: "text-green-600"
           },
           {
-            title: t("Devoirs à corriger", "Devoir pou korije", "Assignments to Grade"),
-            value: "23",
-            change: "-5",
+            title: t("Devoirs", "Devoir yo", "Assignments"),
+            value: "34",
+            change: "+5",
             icon: ClipboardList,
-            color: "text-orange-600"
+            color: "text-purple-600"
           },
           {
-            title: t("Sessions cette semaine", "Sesyon semèn sa a", "Sessions This Week"),
+            title: t("Sessions cette semaine", "Sesyon semèn nan", "Sessions This Week"),
             value: "8",
-            change: "+3",
+            change: "+2",
             icon: Calendar,
-            color: "text-purple-600"
+            color: "text-orange-600"
           }
         ];
       case 'student':
         return [
           {
-            title: t("Cours inscrits", "Kou yo enskriw", "Enrolled Courses"),
-            value: "6",
+            title: t("Cours inscrits", "Kou yo enskriwi", "Enrolled Courses"),
+            value: "8",
             change: "+1",
             icon: BookOpen,
             color: "text-blue-600"
           },
           {
-            title: t("Progression moyenne", "Pwogre mwayen", "Average Progress"),
+            title: t("Devoirs en cours", "Devoir k ap fèt", "Pending Assignments"),
+            value: "3",
+            change: "-2",
+            icon: ClipboardList,
+            color: "text-orange-600"
+          },
+          {
+            title: t("Progression", "Pwogrè", "Progress"),
             value: "78%",
             change: "+5%",
             icon: TrendingUp,
             color: "text-green-600"
           },
           {
-            title: t("Devoirs en cours", "Devoir k ap fèt yo", "Pending Assignments"),
-            value: "4",
-            change: "-2",
-            icon: ClipboardList,
-            color: "text-orange-600"
-          },
-          {
-            title: t("Certificats obtenus", "Sètifika yo jwenn", "Certificates Earned"),
-            value: "3",
+            title: t("Certificats", "Sètifika yo", "Certificates"),
+            value: "2",
             change: "+1",
             icon: Award,
             color: "text-purple-600"
@@ -129,68 +389,15 @@ function DashboardHome() {
     }
   };
 
-  const getRecentActivity = () => {
-    switch (user?.role) {
-      case 'admin':
-        return [
-          {
-            title: t("Nouvelle école ajoutée", "Nouvo lekòl yo ajoute", "New school added"),
-            description: t("École Nationale de Port-au-Prince", "Lekòl Nasyonal Pòtoprens", "National School of Port-au-Prince"),
-            time: t("Il y a 2 heures", "Depi 2 è", "2 hours ago"),
-            icon: GraduationCap
-          },
-          {
-            title: t("Rapport mensuel généré", "Rapò mensyèl yo jenere", "Monthly report generated"),
-            description: t("Statistiques d'utilisation", "Estatistik itilizasyon", "Usage statistics"),
-            time: t("Il y a 4 heures", "Depi 4 è", "4 hours ago"),
-            icon: BarChart3
-          }
-        ];
-      case 'teacher':
-        return [
-          {
-            title: t("Cours publié", "Kou yo pibliye", "Course published"),
-            description: t("Mathématiques avancées", "Matematik avanse", "Advanced Mathematics"),
-            time: t("Il y a 1 heure", "Depi 1 è", "1 hour ago"),
-            icon: BookOpen
-          },
-          {
-            title: t("Session terminée", "Sesyon fini", "Session completed"),
-            description: t("Révision d'algèbre", "Revizyon aljèb", "Algebra review"),
-            time: t("Il y a 3 heures", "Depi 3 è", "3 hours ago"),
-            icon: Clock
-          }
-        ];
-      case 'student':
-        return [
-          {
-            title: t("Cours terminé", "Kou fini", "Course completed"),
-            description: t("Introduction aux sciences", "Entwodiksyon nan syans yo", "Introduction to Sciences"),
-            time: t("Il y a 30 minutes", "Depi 30 minit", "30 minutes ago"),
-            icon: BookOpen
-          },
-          {
-            title: t("Devoir soumis", "Devoir soumèt", "Assignment submitted"),
-            description: t("Analyse littéraire", "Analiz literè", "Literary analysis"),
-            time: t("Il y a 2 heures", "Depi 2 è", "2 hours ago"),
-            icon: ClipboardList
-          }
-        ];
-      default:
-        return [];
-    }
-  };
-
   const stats = getDashboardStats();
-  const activities = getRecentActivity();
 
   return (
     <div className="p-6 space-y-6">
       {/* Welcome Section */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">
           {t(`Bienvenue, ${user?.firstName}!`, `Byenveni, ${user?.firstName}!`, `Welcome, ${user?.firstName}!`)}
-        </h1>
+        </h2>
         <p className="text-gray-600">
           {user?.role === 'admin' && t("Gérez votre plateforme éducative", "Jere platfòm edikatif ou a", "Manage your educational platform")}
           {user?.role === 'teacher' && t("Créez et gérez vos cours", "Kreye ak jere kou ou yo", "Create and manage your courses")}
@@ -199,118 +406,113 @@ function DashboardHome() {
       </div>
 
       {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {stats.map((stat, index) => (
-          <Card key={index}>
+          <Card key={index} className="hover:shadow-md transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                  <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
-                  <p className={`text-sm ${stat.change.startsWith('+') ? 'text-green-600' : 'text-red-600'}`}>
+                  <p className="text-3xl font-bold text-gray-900 mt-1">{stat.value}</p>
+                  <p className={`text-sm mt-1 ${stat.change.startsWith('+') ? 'text-green-600' : 'text-red-600'}`}>
                     {stat.change} {t("ce mois", "mwa sa a", "this month")}
                   </p>
                 </div>
-                <stat.icon className={`h-8 w-8 ${stat.color}`} />
+                <div className={`p-3 rounded-lg bg-gray-50`}>
+                  <stat.icon className={`h-6 w-6 ${stat.color}`} />
+                </div>
               </div>
             </CardContent>
           </Card>
         ))}
       </div>
 
+      {/* Quick Actions */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Activity */}
         <Card>
           <CardHeader>
-            <CardTitle>{t("Activité récente", "Aktivite resan", "Recent Activity")}</CardTitle>
+            <CardTitle>{t("Actions rapides", "Aksyon rapid yo", "Quick Actions")}</CardTitle>
+            <CardDescription>
+              {t("Accédez rapidement aux fonctionnalités principales", "Jwenn aksè rapid nan fonksyonalite prensipal yo", "Quick access to main features")}
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {activities.map((activity, index) => (
-                <div key={index} className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
-                    <activity.icon className="h-5 w-5 text-blue-600" />
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="text-sm font-medium text-gray-900">{activity.title}</h4>
-                    <p className="text-sm text-gray-600">{activity.description}</p>
-                    <p className="text-xs text-gray-500 mt-1">{activity.time}</p>
-                  </div>
-                </div>
-              ))}
+            <div className="space-y-3">
+              {user?.role === 'admin' && (
+                <>
+                  <Link href="/user-management">
+                    <Button variant="outline" className="w-full justify-start">
+                      <Users className="h-4 w-4 mr-2" />
+                      {t("Gérer les utilisateurs", "Jere itilizatè yo", "Manage Users")}
+                    </Button>
+                  </Link>
+                  <Link href="/school-management">
+                    <Button variant="outline" className="w-full justify-start">
+                      <School className="h-4 w-4 mr-2" />
+                      {t("Gérer les écoles", "Jere lekòl yo", "Manage Schools")}
+                    </Button>
+                  </Link>
+                </>
+              )}
+              {user?.role === 'teacher' && (
+                <>
+                  <Link href="/course-management">
+                    <Button variant="outline" className="w-full justify-start">
+                      <Upload className="h-4 w-4 mr-2" />
+                      {t("Créer un cours", "Kreye yon kou", "Create Course")}
+                    </Button>
+                  </Link>
+                  <Link href="/video-conference">
+                    <Button variant="outline" className="w-full justify-start">
+                      <Video className="h-4 w-4 mr-2" />
+                      {t("Session live", "Sesyon vivan", "Live Session")}
+                    </Button>
+                  </Link>
+                </>
+              )}
+              {user?.role === 'student' && (
+                <>
+                  <Button variant="outline" className="w-full justify-start">
+                    <BookOpen className="h-4 w-4 mr-2" />
+                    {t("Mes cours", "Kou mwen yo", "My Courses")}
+                  </Button>
+                  <Button variant="outline" className="w-full justify-start">
+                    <ClipboardList className="h-4 w-4 mr-2" />
+                    {t("Devoirs", "Devoir yo", "Assignments")}
+                  </Button>
+                </>
+              )}
             </div>
           </CardContent>
         </Card>
 
-        {/* Quick Actions */}
         <Card>
           <CardHeader>
-            <CardTitle>{t("Actions rapides", "Aksyon rapid yo", "Quick Actions")}</CardTitle>
+            <CardTitle>{t("Activité récente", "Aktivite resan yo", "Recent Activity")}</CardTitle>
+            <CardDescription>
+              {t("Aperçu de vos dernières actions", "Apèsi dènye aksyon ou yo", "Overview of your recent actions")}
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 gap-3">
-              {user?.role === 'admin' && (
-                <>
-                  <Button variant="outline" className="h-20 flex flex-col gap-2">
-                    <Users className="h-6 w-6" />
-                    <span className="text-xs">{t("Gérer utilisateurs", "Jere itilizatè yo", "Manage Users")}</span>
-                  </Button>
-                  <Button variant="outline" className="h-20 flex flex-col gap-2">
-                    <BarChart3 className="h-6 w-6" />
-                    <span className="text-xs">{t("Rapports", "Rapò yo", "Reports")}</span>
-                  </Button>
-                  <Button variant="outline" className="h-20 flex flex-col gap-2">
-                    <GraduationCap className="h-6 w-6" />
-                    <span className="text-xs">{t("Ajouter école", "Ajoute lekòl", "Add School")}</span>
-                  </Button>
-                  <Button variant="outline" className="h-20 flex flex-col gap-2">
-                    <Settings className="h-6 w-6" />
-                    <span className="text-xs">{t("Paramètres", "Paramèt yo", "Settings")}</span>
-                  </Button>
-                </>
-              )}
-              
-              {user?.role === 'teacher' && (
-                <>
-                  <Button variant="outline" className="h-20 flex flex-col gap-2">
-                    <BookOpen className="h-6 w-6" />
-                    <span className="text-xs">{t("Créer cours", "Kreye kou", "Create Course")}</span>
-                  </Button>
-                  <Button variant="outline" className="h-20 flex flex-col gap-2">
-                    <ClipboardList className="h-6 w-6" />
-                    <span className="text-xs">{t("Nouveau devoir", "Nouvo devoir", "New Assignment")}</span>
-                  </Button>
-                  <Button variant="outline" className="h-20 flex flex-col gap-2">
-                    <Calendar className="h-6 w-6" />
-                    <span className="text-xs">{t("Session live", "Sesyon vivan", "Live Session")}</span>
-                  </Button>
-                  <Button variant="outline" className="h-20 flex flex-col gap-2">
-                    <BarChart3 className="h-6 w-6" />
-                    <span className="text-xs">{t("Progressions", "Pwogre yo", "Progress")}</span>
-                  </Button>
-                </>
-              )}
-              
-              {user?.role === 'student' && (
-                <>
-                  <Button variant="outline" className="h-20 flex flex-col gap-2">
-                    <BookOpen className="h-6 w-6" />
-                    <span className="text-xs">{t("Mes cours", "Kou mwen yo", "My Courses")}</span>
-                  </Button>
-                  <Button variant="outline" className="h-20 flex flex-col gap-2">
-                    <ClipboardList className="h-6 w-6" />
-                    <span className="text-xs">{t("Devoirs", "Devoir yo", "Assignments")}</span>
-                  </Button>
-                  <Button variant="outline" className="h-20 flex flex-col gap-2">
-                    <Calendar className="h-6 w-6" />
-                    <span className="text-xs">{t("Planning", "Plan", "Schedule")}</span>
-                  </Button>
-                  <Button variant="outline" className="h-20 flex flex-col gap-2">
-                    <Award className="h-6 w-6" />
-                    <span className="text-xs">{t("Certificats", "Sètifika yo", "Certificates")}</span>
-                  </Button>
-                </>
-              )}
+            <div className="space-y-3">
+              <div className="flex items-center space-x-3">
+                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                <p className="text-sm">
+                  {t("Nouveau cours créé: Mathématiques", "Nouvo kou kreye: Matematik", "New course created: Mathematics")}
+                </p>
+              </div>
+              <div className="flex items-center space-x-3">
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <p className="text-sm">
+                  {t("5 nouveaux étudiants inscrits", "5 nouvo elèv enskriwi", "5 new students enrolled")}
+                </p>
+              </div>
+              <div className="flex items-center space-x-3">
+                <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                <p className="text-sm">
+                  {t("Session vidéo planifiée", "Sesyon videyo planifye", "Video session scheduled")}
+                </p>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -319,28 +521,109 @@ function DashboardHome() {
   );
 }
 
+// Main Dashboard Component
 export default function MainDashboard() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user } = useAuth();
+  const { t } = useLanguage();
+
+  const getRoleLabel = (role: string) => {
+    switch (role) {
+      case "admin": return t("Administrateur", "Administratè", "Administrator");
+      case "teacher": return t("Enseignant", "Pwofesè", "Teacher");
+      case "student": return t("Élève", "Elèv", "Student");
+      case "parent": return t("Parent", "Paran", "Parent");
+      default: return role;
+    }
+  };
 
   return (
     <div className="flex h-screen bg-gray-50">
-      <Sidebar 
-        collapsed={sidebarCollapsed} 
-        onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
-      />
-      
-      <div className="flex-1 overflow-auto">
-        <Switch>
-          <Route path="/" component={DashboardHome} />
-          <Route path="/teacher/create-course" component={CourseCreation} />
-          <Route path="/teacher/live-sessions" component={LiveSession} />
-          <Route path="/student/courses" component={StudentDashboard} />
-          <Route path="/student/quiz/:id" component={QuizInterface} />
-          <Route path="/live-session/:id" component={LiveSession} />
-          <Route>
-            <DashboardHome />
-          </Route>
-        </Switch>
+      {/* Desktop Sidebar */}
+      <div className="hidden lg:block">
+        <CollapsibleSidebar 
+          isCollapsed={sidebarCollapsed} 
+          onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} 
+        />
+      </div>
+
+      {/* Mobile Sidebar Overlay */}
+      {mobileMenuOpen && (
+        <>
+          <div 
+            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 lg:hidden"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+          <div className="lg:hidden fixed left-0 top-0 h-full w-64 z-50">
+            <CollapsibleSidebar 
+              isCollapsed={false} 
+              onToggle={() => setMobileMenuOpen(false)} 
+            />
+          </div>
+        </>
+      )}
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Top Navigation */}
+        <header className="bg-white shadow-sm border-b sticky top-0 z-30">
+          <div className="px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-16">
+              <div className="flex items-center space-x-4">
+                {/* Mobile Menu Button */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="lg:hidden"
+                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                >
+                  <Menu className="h-5 w-5" />
+                </Button>
+                
+                <div>
+                  <h1 className="text-xl font-bold text-gray-900">
+                    {t("Tableau de bord", "Tablo jesyon", "Dashboard")}
+                  </h1>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-3">
+                {/* Language and Theme toggles */}
+                <div className="flex items-center space-x-2">
+                  <LanguageSwitcher />
+                  <ThemeToggle />
+                </div>
+                
+                {/* Notifications */}
+                <Button variant="ghost" size="sm" className="relative">
+                  <Bell className="h-5 w-5" />
+                  <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 rounded-full text-xs text-white flex items-center justify-center">
+                    3
+                  </span>
+                </Button>
+                
+                {/* User profile */}
+                <div className="flex items-center space-x-3 pl-3 border-l border-gray-200">
+                  <div className="text-right hidden sm:block">
+                    <p className="text-sm font-medium text-gray-900">
+                      {user?.firstName} {user?.lastName}
+                    </p>
+                    <p className="text-xs text-gray-500">{getRoleLabel(user?.role || "")}</p>
+                  </div>
+                  <div className="h-8 w-8 bg-primary rounded-full flex items-center justify-center text-white text-sm font-medium">
+                    {user?.firstName?.[0]}{user?.lastName?.[0]}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Main Content Area */}
+        <main className="flex-1 overflow-auto">
+          <DashboardContent />
+        </main>
       </div>
     </div>
   );
