@@ -85,6 +85,30 @@ export interface IStorage {
   createMessage(message: InsertMessage): Promise<Message>;
   markMessageAsRead(id: number): Promise<Message | undefined>;
 
+  // Teacher management
+  getTeachers(): Promise<Teacher[]>;
+  getTeacher(id: number): Promise<Teacher | undefined>;
+  getTeacherByUserId(userId: number): Promise<Teacher | undefined>;
+  createTeacher(teacher: InsertTeacher): Promise<Teacher>;
+  updateTeacher(id: number, teacher: Partial<InsertTeacher>): Promise<Teacher | undefined>;
+
+  // Parent management
+  getParents(): Promise<Parent[]>;
+  getParent(id: number): Promise<Parent | undefined>;
+  getParentByUserId(userId: number): Promise<Parent | undefined>;
+  createParent(parent: InsertParent): Promise<Parent>;
+  updateParent(id: number, parent: Partial<InsertParent>): Promise<Parent | undefined>;
+
+  // Teacher-Course relationships
+  getTeacherCourses(teacherId: number): Promise<TeacherCourse[]>;
+  assignCourseToTeacher(teacherId: number, courseId: number): Promise<TeacherCourse>;
+  removeCourseFromTeacher(teacherId: number, courseId: number): Promise<void>;
+
+  // Parent-Student relationships
+  getParentStudents(parentId: number): Promise<ParentStudent[]>;
+  assignStudentToParent(parentId: number, studentId: number): Promise<ParentStudent>;
+  removeStudentFromParent(parentId: number, studentId: number): Promise<void>;
+
   sessionStore: any;
 }
 
