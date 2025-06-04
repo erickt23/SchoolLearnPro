@@ -30,6 +30,7 @@ import {
   Smartphone
 } from "lucide-react";
 import LanguageSwitcher from "@/components/language-switcher-new";
+import { ThemeToggle } from "@/components/theme-toggle";
 import Sidebar from "@/components/layout/sidebar";
 import CourseCreation from "@/components/elearning/course-creation";
 import StudentDashboard from "@/components/elearning/student-dashboard";
@@ -906,6 +907,8 @@ export default function EnhancedDashboard() {
       <div className="flex-1 lg:ml-0">
         {/* Boutons de navigation */}
         <div className="fixed top-4 right-4 z-50 flex gap-2">
+          <ThemeToggle />
+          <LanguageSwitcher />
           <Button
             onClick={() => setShowKalitekSidebar(true)}
             variant="outline"

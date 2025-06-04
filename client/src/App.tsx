@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "./hooks/use-auth";
 import { LanguageProvider } from "./hooks/use-language";
+import { ThemeProvider } from "./hooks/use-theme";
 import LandingPage from "@/pages/landing-page-fixed";
 import AuthPage from "@/pages/auth-page-fixed";
 import EnhancedDashboard from "@/pages/enhanced-dashboard";
@@ -40,12 +41,14 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <LanguageProvider>
-          <AuthProvider>
-            <Toaster />
-            <Router />
-          </AuthProvider>
-        </LanguageProvider>
+        <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+          <LanguageProvider>
+            <AuthProvider>
+              <Toaster />
+              <Router />
+            </AuthProvider>
+          </LanguageProvider>
+        </ThemeProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );
