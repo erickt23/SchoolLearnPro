@@ -27,7 +27,9 @@ import {
   CreditCard,
   Smartphone,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  ChevronDown,
+  ChevronUp
 } from "lucide-react";
 import LanguageSwitcher from "@/components/language-switcher-new";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -37,15 +39,26 @@ import { Link } from "wouter";
 function CollapsibleSidebar({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () => void }) {
   const { user, logoutMutation } = useAuth();
   const { t } = useLanguage();
+  const [expandedSections, setExpandedSections] = useState<string[]>(["management", "modules", "teaching", "learning"]);
+
+  const toggleSection = (sectionId: string) => {
+    setExpandedSections(prev => 
+      prev.includes(sectionId) 
+        ? prev.filter(id => id !== sectionId)
+        : [...prev, sectionId]
+    );
+  };
 
   const getMenuItems = () => {
     const baseItems = [
       {
         title: t("Tableau de bord", "Tablo jesyon", "Dashboard"),
         icon: BarChart3,
-        path: "/dashboard",
+        path: "/",
         badge: null,
-        isSection: false
+        isSection: false,
+        sectionId: null,
+        isSubItem: false
       }
     ];
 
@@ -55,66 +68,86 @@ function CollapsibleSidebar({ isCollapsed, onToggle }: { isCollapsed: boolean; o
           ...baseItems,
           {
             title: t("Gestion", "Jesyon", "Management"),
-            icon: null,
+            icon: Settings,
             path: null,
             badge: null,
-            isSection: true
+            isSection: true,
+            sectionId: "management",
+            isSubItem: false,
+            isCollapsible: true
           },
           {
             title: t("Utilisateurs", "Itilizatè yo", "Users"),
             icon: Users,
             path: "/user-management",
             badge: "1,234",
-            isSection: false
+            isSection: false,
+            sectionId: "management",
+            isSubItem: true
           },
           {
             title: t("Écoles", "Lekòl yo", "Schools"),
             icon: School,
             path: "/school-management",
             badge: "45",
-            isSection: false
+            isSection: false,
+            sectionId: "management",
+            isSubItem: true
           },
           {
             title: t("Classes", "Klas yo", "Classes"),
             icon: BookOpen,
             path: "/class-management",
             badge: "156",
-            isSection: false
+            isSection: false,
+            sectionId: "management",
+            isSubItem: true
           },
           {
             title: t("Cours", "Kou yo", "Courses"),
             icon: Upload,
             path: "/course-management",
             badge: "89",
-            isSection: false
+            isSection: false,
+            sectionId: "management",
+            isSubItem: true
           },
           {
             title: t("Modules", "Modil yo", "Modules"),
-            icon: null,
+            icon: CreditCard,
             path: null,
             badge: null,
-            isSection: true
+            isSection: true,
+            sectionId: "modules",
+            isSubItem: false,
+            isCollapsible: true
           },
           {
             title: t("Vidéoconférence", "Videokonferans", "Video Conference"),
             icon: Video,
             path: "/video-conference",
             badge: "Live",
-            isSection: false
+            isSection: false,
+            sectionId: "modules",
+            isSubItem: true
           },
           {
             title: t("Paiements", "Peman yo", "Payments"),
             icon: CreditCard,
             path: "/payment-module",
             badge: "€2,450",
-            isSection: false
+            isSection: false,
+            sectionId: "modules",
+            isSubItem: true
           },
           {
             title: t("App Mobile", "App Mobil", "Mobile App"),
             icon: Smartphone,
             path: "/mobile-app",
             badge: "Beta",
-            isSection: false
+            isSection: false,
+            sectionId: "modules",
+            isSubItem: true
           }
         ];
       case 'teacher':
@@ -122,31 +155,40 @@ function CollapsibleSidebar({ isCollapsed, onToggle }: { isCollapsed: boolean; o
           ...baseItems,
           {
             title: t("Enseignement", "Ansèyman", "Teaching"),
-            icon: null,
+            icon: GraduationCap,
             path: null,
             badge: null,
-            isSection: true
+            isSection: true,
+            sectionId: "teaching",
+            isSubItem: false,
+            isCollapsible: true
           },
           {
             title: t("Mes cours", "Kou mwen yo", "My Courses"),
             icon: BookOpen,
             path: "/teacher/courses",
             badge: "12",
-            isSection: false
+            isSection: false,
+            sectionId: "teaching",
+            isSubItem: true
           },
           {
             title: t("Étudiants", "Elèv yo", "Students"),
             icon: Users,
             path: "/teacher/students",
             badge: "156",
-            isSection: false
+            isSection: false,
+            sectionId: "teaching",
+            isSubItem: true
           },
           {
             title: t("Planning", "Planifikasyon", "Schedule"),
             icon: Calendar,
             path: "/teacher/schedule",
             badge: null,
-            isSection: false
+            isSection: false,
+            sectionId: "teaching",
+            isSubItem: true
           }
         ];
       case 'student':
@@ -154,24 +196,31 @@ function CollapsibleSidebar({ isCollapsed, onToggle }: { isCollapsed: boolean; o
           ...baseItems,
           {
             title: t("Apprentissage", "Aprantisaj", "Learning"),
-            icon: null,
+            icon: BookOpen,
             path: null,
             badge: null,
-            isSection: true
+            isSection: true,
+            sectionId: "learning",
+            isSubItem: false,
+            isCollapsible: true
           },
           {
             title: t("Mes cours", "Kou mwen yo", "My Courses"),
             icon: BookOpen,
             path: "/student/courses",
             badge: "8",
-            isSection: false
+            isSection: false,
+            sectionId: "learning",
+            isSubItem: true
           },
           {
             title: t("Devoirs", "Devoir yo", "Assignments"),
             icon: ClipboardList,
             path: "/student/assignments",
             badge: "3",
-            isSection: false
+            isSection: false,
+            sectionId: "learning",
+            isSubItem: true
           }
         ];
       default:
@@ -220,19 +269,64 @@ function CollapsibleSidebar({ isCollapsed, onToggle }: { isCollapsed: boolean; o
       <nav className="flex-1 p-4 overflow-y-auto">
         <div className="space-y-1">
           {menuItems.map((item, index) => {
+            // Section headers (collapsible)
             if (item.isSection) {
               if (isCollapsed) return null;
+              const isExpanded = expandedSections.includes(item.sectionId!);
+              
               return (
                 <div key={index} className="mt-6 first:mt-0">
-                  <div className="px-3 py-2">
-                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                      {item.title}
-                    </p>
-                  </div>
+                  <Button
+                    variant="ghost"
+                    onClick={() => toggleSection(item.sectionId!)}
+                    className="w-full justify-start text-left hover:bg-gray-100 px-3 py-2"
+                  >
+                    <div className="flex items-center justify-between w-full">
+                      <div className="flex items-center">
+                        {item.icon && <item.icon className="h-4 w-4 mr-3" />}
+                        <span className="text-sm font-semibold text-gray-700">
+                          {item.title}
+                        </span>
+                      </div>
+                      {isExpanded ? (
+                        <ChevronDown className="h-4 w-4 text-gray-500" />
+                      ) : (
+                        <ChevronRight className="h-4 w-4 text-gray-500" />
+                      )}
+                    </div>
+                  </Button>
                 </div>
               );
             }
 
+            // Sub-items (only show if parent section is expanded)
+            if (item.isSubItem) {
+              if (isCollapsed) return null;
+              if (!expandedSections.includes(item.sectionId!)) return null;
+              
+              return (
+                <Link key={item.path} href={item.path!}>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start text-left hover:bg-gray-100 pl-8 py-2 ml-4"
+                  >
+                    <div className="flex items-center justify-between w-full">
+                      <div className="flex items-center">
+                        {item.icon && <item.icon className="h-4 w-4 mr-3 text-gray-600" />}
+                        <span className="text-sm text-gray-700">{item.title}</span>
+                      </div>
+                      {item.badge && (
+                        <Badge variant="secondary" className="text-xs">
+                          {item.badge}
+                        </Badge>
+                      )}
+                    </div>
+                  </Button>
+                </Link>
+              );
+            }
+
+            // Regular menu items (not sub-items)
             if (!item.path) return null;
 
             return (
