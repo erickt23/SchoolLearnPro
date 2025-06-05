@@ -23,7 +23,8 @@ import {
   BookOpen,
   Award,
   TrendingUp,
-  BarChart3
+  BarChart3,
+  Play
 } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";

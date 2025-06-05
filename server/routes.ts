@@ -56,6 +56,36 @@ export function registerRoutes(app: Express): Server {
     }
   });
 
+  app.post("/api/schools", requireAuth, requireRole(["admin"]), async (req, res) => {
+    try {
+      console.log("Received school data:", req.body);
+      const school = await storage.createSchool(req.body);
+      res.status(201).json(school);
+    } catch (error) {
+      console.error("School creation error:", error);
+      if (error instanceof Error) {
+        res.status(400).json({ message: error.message });
+      } else {
+        res.status(400).json({ message: "Invalid school data" });
+      }
+    }
+  });
+
+  app.post("/api/school-networks", requireAuth, requireRole(["admin"]), async (req, res) => {
+    try {
+      console.log("Received school network data:", req.body);
+      const network = await storage.createSchoolNetwork(req.body);
+      res.status(201).json(network);
+    } catch (error) {
+      console.error("School network creation error:", error);
+      if (error instanceof Error) {
+        res.status(400).json({ message: error.message });
+      } else {
+        res.status(400).json({ message: "Invalid school network data" });
+      }
+    }
+  });
+
   // Dashboard data endpoint
   app.get("/api/dashboard", requireAuth, async (req, res) => {
     try {
