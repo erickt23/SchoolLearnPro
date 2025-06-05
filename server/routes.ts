@@ -363,11 +363,17 @@ export function registerRoutes(app: Express): Server {
 
   app.post("/api/courses", requireAuth, requireRole(["teacher", "admin"]), async (req, res) => {
     try {
+      console.log("Received course data:", req.body);
       const courseData = insertCourseSchema.parse(req.body);
       const course = await storage.createCourse(courseData);
       res.status(201).json(course);
     } catch (error) {
-      res.status(400).json({ message: "Invalid course data" });
+      console.error("Course creation error:", error);
+      if (error instanceof Error) {
+        res.status(400).json({ message: error.message });
+      } else {
+        res.status(400).json({ message: "Invalid course data" });
+      }
     }
   });
 
