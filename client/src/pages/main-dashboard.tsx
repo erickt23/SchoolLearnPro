@@ -308,7 +308,7 @@ function CollapsibleSidebar({ isCollapsed, onToggle }: { isCollapsed: boolean; o
                 <Link key={item.path} href={item.path!}>
                   <Button
                     variant="ghost"
-                    className="w-full justify-start text-left hover:bg-gray-100 pl-8 py-2 ml-4"
+                    className="w-full justify-start text-left hover:bg-accent pl-8 py-2 ml-4"
                   >
                     <div className="flex items-center justify-between w-full">
                       <div className="flex items-center">
@@ -333,7 +333,7 @@ function CollapsibleSidebar({ isCollapsed, onToggle }: { isCollapsed: boolean; o
               <Link key={item.path} href={item.path}>
                 <Button
                   variant="ghost"
-                  className={`w-full justify-start text-left hover:bg-gray-100 ${isCollapsed ? 'px-2' : 'pl-6'}`}
+                  className={`w-full justify-start text-left hover:bg-accent ${isCollapsed ? 'px-2' : 'pl-6'}`}
                 >
                   <div className="flex items-center justify-between w-full">
                     <div className="flex items-center">
@@ -354,7 +354,7 @@ function CollapsibleSidebar({ isCollapsed, onToggle }: { isCollapsed: boolean; o
       </nav>
 
       {/* Logout button */}
-      <div className="p-4 border-t border-gray-200">
+      <div className="p-4 border-t border-border">
         <Button
           variant="outline"
           onClick={() => logoutMutation.mutate()}
@@ -633,7 +633,7 @@ export default function MainDashboard() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-background">
       {/* Desktop Sidebar */}
       <div className="hidden lg:block">
         <CollapsibleSidebar 
@@ -661,7 +661,7 @@ export default function MainDashboard() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Navigation */}
-        <header className="bg-white shadow-sm border-b sticky top-0 z-30">
+        <header className="bg-card shadow-sm border-b border-border sticky top-0 z-30">
           <div className="px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center space-x-4">
@@ -676,7 +676,7 @@ export default function MainDashboard() {
                 </Button>
                 
                 <div>
-                  <h1 className="text-xl font-bold text-gray-900">
+                  <h1 className="text-xl font-bold text-foreground">
                     {t("Tableau de bord", "Tablo jesyon", "Dashboard")}
                   </h1>
                 </div>
@@ -698,14 +698,14 @@ export default function MainDashboard() {
                 </Button>
                 
                 {/* User profile */}
-                <div className="flex items-center space-x-3 pl-3 border-l border-gray-200">
+                <div className="flex items-center space-x-3 pl-3 border-l border-border">
                   <div className="text-right hidden sm:block">
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-sm font-medium text-foreground">
                       {user?.firstName} {user?.lastName}
                     </p>
-                    <p className="text-xs text-gray-500">{getRoleLabel(user?.role || "")}</p>
+                    <p className="text-xs text-muted-foreground">{getRoleLabel(user?.role || "")}</p>
                   </div>
-                  <div className="h-8 w-8 bg-primary rounded-full flex items-center justify-center text-white text-sm font-medium">
+                  <div className="h-8 w-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground text-sm font-medium">
                     {user?.firstName?.[0]}{user?.lastName?.[0]}
                   </div>
                 </div>
