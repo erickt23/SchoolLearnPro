@@ -128,9 +128,55 @@ export const attendance = pgTable("attendance", {
   studentId: integer("student_id").references(() => students.id).notNull(),
   classId: integer("class_id").references(() => classes.id).notNull(),
   date: timestamp("date").notNull(),
-  status: text("status").notNull(), // present, absent, late
+  status: text("status").notNull(), // present, absent, late, excused
   reason: text("reason"),
+  arrivalTime: text("arrival_time"), // For late arrivals
+  departureTime: text("departure_time"), // For early departures
+  notes: text("notes"),
   markedBy: integer("marked_by").references(() => users.id).notNull(),
+  parentNotified: boolean("parent_notified").default(false),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Discipline Infractions table
+export const infractions = pgTable("infractions", {
+  id: serial("id").primaryKey(),
+  studentId: integer("student_id").references(() => students.id).notNull(),
+  classId: integer("class_id").references(() => classes.id),
+  type: text("type").notNull(), // behavioral, academic, uniform, tardiness, etc.
+  severity: text("severity").notNull(), // minor, major, severe
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  location: text("location"), // classroom, hallway, cafeteria, etc.
+  dateOccurred: timestamp("date_occurred").notNull(),
+  reportedBy: integer("reported_by").references(() => users.id).notNull(),
+  witnesses: text("witnesses"), // Names of witnesses
+  actionTaken: text("action_taken"), // warning, detention, suspension, etc.
+  followUpRequired: boolean("follow_up_required").default(false),
+  followUpDate: timestamp("follow_up_date"),
+  parentContacted: boolean("parent_contacted").default(false),
+  parentContactDate: timestamp("parent_contact_date"),
+  parentContactMethod: text("parent_contact_method"), // phone, email, meeting
+  resolution: text("resolution"),
+  status: text("status").notNull().default("open"), // open, resolved, escalated
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Discipline Actions table (for tracking punishments/consequences)
+export const disciplineActions = pgTable("discipline_actions", {
+  id: serial("id").primaryKey(),
+  infractionId: integer("infraction_id").references(() => infractions.id).notNull(),
+  actionType: text("action_type").notNull(), // warning, detention, suspension, expulsion, counseling
+  duration: text("duration"), // 1 day, 1 week, etc.
+  startDate: timestamp("start_date"),
+  endDate: timestamp("end_date"),
+  assignedBy: integer("assigned_by").references(() => users.id).notNull(),
+  description: text("description"),
+  completed: boolean("completed").default(false),
+  completedDate: timestamp("completed_date"),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 // Courses (E-learning)
@@ -410,6 +456,17 @@ export const insertParentStudentSchema = createInsertSchema(parentStudents).omit
   id: true,
 });
 
+export const insertInfractionSchema = createInsertSchema(infractions).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertDisciplineActionSchema = createInsertSchema(disciplineActions).omit({
+  id: true,
+  createdAt: true,
+});
+
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -443,3 +500,7 @@ export type TeacherCourse = typeof teacherCourses.$inferSelect;
 export type InsertTeacherCourse = z.infer<typeof insertTeacherCourseSchema>;
 export type ParentStudent = typeof parentStudents.$inferSelect;
 export type InsertParentStudent = z.infer<typeof insertParentStudentSchema>;
+export type Infraction = typeof infractions.$inferSelect;
+export type InsertInfraction = z.infer<typeof insertInfractionSchema>;
+export type DisciplineAction = typeof disciplineActions.$inferSelect;
+export type InsertDisciplineAction = z.infer<typeof insertDisciplineActionSchema>;

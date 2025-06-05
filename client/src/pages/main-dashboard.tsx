@@ -132,6 +132,36 @@ function CollapsibleSidebar({ isCollapsed, onToggle }: { isCollapsed: boolean; o
             isSubItem: true
           },
           {
+            title: t("Discipline", "Disiplin", "Discipline"),
+            icon: Shield,
+            path: null,
+            badge: null,
+            isSection: false,
+            sectionId: "modules",
+            isSubItem: true,
+            isCollapsible: true,
+            subItems: [
+              {
+                title: t("Présences", "Prezans", "Attendance"),
+                icon: UserCheck,
+                path: "/discipline?tab=attendance",
+                badge: null,
+                isSection: false,
+                sectionId: "modules",
+                isSubItem: true
+              },
+              {
+                title: t("Infractions", "Enfraksyon", "Infractions"),
+                icon: AlertTriangle,
+                path: "/discipline?tab=infractions",
+                badge: "3",
+                isSection: false,
+                sectionId: "modules",
+                isSubItem: true
+              }
+            ]
+          },
+          {
             title: t("Vidéoconférence", "Videokonferans", "Video Conference"),
             icon: Video,
             path: "/video-conference",
