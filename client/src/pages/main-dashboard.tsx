@@ -231,9 +231,9 @@ function CollapsibleSidebar({ isCollapsed, onToggle }: { isCollapsed: boolean; o
   const menuItems = getMenuItems();
 
   return (
-    <div className={`bg-white border-r border-gray-200 h-full flex flex-col transition-all duration-300 ${isCollapsed ? 'w-16' : 'w-64'}`}>
+    <div className={`bg-card border-r border-border h-full flex flex-col transition-all duration-300 ${isCollapsed ? 'w-16' : 'w-64'}`}>
       {/* Header with toggle */}
-      <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+      <div className="p-4 border-b border-border flex items-center justify-between">
         {!isCollapsed && (
           <div className="flex items-center">
             <GraduationCap className="h-8 w-8 text-primary mr-2" />
@@ -252,14 +252,14 @@ function CollapsibleSidebar({ isCollapsed, onToggle }: { isCollapsed: boolean; o
 
       {/* User Info */}
       {!isCollapsed && (
-        <div className="p-4 border-b border-gray-200">
+        <div className="p-4 border-b border-border">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-              <User className="h-5 w-5 text-blue-600" />
+            <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+              <User className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <p className="font-medium text-sm">{user?.firstName} {user?.lastName}</p>
-              <p className="text-xs text-gray-500 capitalize">{user?.role}</p>
+              <p className="font-medium text-sm text-foreground">{user?.firstName} {user?.lastName}</p>
+              <p className="text-xs text-muted-foreground capitalize">{user?.role}</p>
             </div>
           </div>
         </div>
@@ -279,19 +279,19 @@ function CollapsibleSidebar({ isCollapsed, onToggle }: { isCollapsed: boolean; o
                   <Button
                     variant="ghost"
                     onClick={() => toggleSection(item.sectionId!)}
-                    className="w-full justify-start text-left hover:bg-gray-100 px-3 py-2"
+                    className="w-full justify-start text-left hover:bg-accent px-3 py-2"
                   >
                     <div className="flex items-center justify-between w-full">
                       <div className="flex items-center">
                         {item.icon && <item.icon className="h-4 w-4 mr-3" />}
-                        <span className="text-sm font-semibold text-gray-700">
+                        <span className="text-sm font-semibold text-foreground">
                           {item.title}
                         </span>
                       </div>
                       {isExpanded ? (
-                        <ChevronDown className="h-4 w-4 text-gray-500" />
+                        <ChevronDown className="h-4 w-4 text-muted-foreground" />
                       ) : (
-                        <ChevronRight className="h-4 w-4 text-gray-500" />
+                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
                       )}
                     </div>
                   </Button>
@@ -312,8 +312,8 @@ function CollapsibleSidebar({ isCollapsed, onToggle }: { isCollapsed: boolean; o
                   >
                     <div className="flex items-center justify-between w-full">
                       <div className="flex items-center">
-                        {item.icon && <item.icon className="h-4 w-4 mr-3 text-gray-600" />}
-                        <span className="text-sm text-gray-700">{item.title}</span>
+                        {item.icon && <item.icon className="h-4 w-4 mr-3 text-muted-foreground" />}
+                        <span className="text-sm text-foreground">{item.title}</span>
                       </div>
                       {item.badge && (
                         <Badge variant="secondary" className="text-xs">
