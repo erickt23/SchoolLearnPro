@@ -29,7 +29,10 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Shield,
+  UserCheck,
+  AlertTriangle
 } from "lucide-react";
 import LanguageSwitcher from "@/components/language-switcher-new";
 import { ThemeToggle } from "@/components/theme-toggle";
