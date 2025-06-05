@@ -37,6 +37,7 @@ export interface IStorage {
   getSchool(id: number): Promise<School | undefined>;
   getSchoolsByNetwork(networkId: number): Promise<School[]>;
   createSchool(school: InsertSchool): Promise<School>;
+  updateSchool(id: number, school: Partial<InsertSchool>): Promise<School | undefined>;
 
   // Student management
   getStudent(id: number): Promise<Student | undefined>;
@@ -48,6 +49,7 @@ export interface IStorage {
   getClass(id: number): Promise<Class | undefined>;
   getClasses(): Promise<Class[]>;
   createClass(classData: InsertClass): Promise<Class>;
+  updateClass(id: number, classData: Partial<InsertClass>): Promise<Class | undefined>;
   getClassesByTeacher(teacherId: number): Promise<Class[]>;
 
   // Subject management
@@ -197,6 +199,14 @@ export class DatabaseStorage implements IStorage {
     return newSchool;
   }
 
+  async updateSchool(id: number, schoolData: Partial<InsertSchool>): Promise<School | undefined> {
+    const [updatedSchool] = await db.update(schools)
+      .set(schoolData)
+      .where(eq(schools.id, id))
+      .returning();
+    return updatedSchool || undefined;
+  }
+
   // Student methods
   async getStudent(id: number): Promise<Student | undefined> {
     const [student] = await db.select().from(students).where(eq(students.id, id));
@@ -230,6 +240,14 @@ export class DatabaseStorage implements IStorage {
   async createClass(classData: InsertClass): Promise<Class> {
     const [newClass] = await db.insert(classes).values(classData).returning();
     return newClass;
+  }
+
+  async updateClass(id: number, classData: Partial<InsertClass>): Promise<Class | undefined> {
+    const [updatedClass] = await db.update(classes)
+      .set(classData)
+      .where(eq(classes.id, id))
+      .returning();
+    return updatedClass || undefined;
   }
 
   async getClassesByTeacher(teacherId: number): Promise<Class[]> {

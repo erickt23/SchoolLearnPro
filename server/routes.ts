@@ -86,6 +86,25 @@ export function registerRoutes(app: Express): Server {
     }
   });
 
+  app.put("/api/schools/:id", requireAuth, requireRole(["admin"]), async (req, res) => {
+    try {
+      console.log("Updating school:", req.params.id, req.body);
+      const schoolId = parseInt(req.params.id);
+      const updatedSchool = await storage.updateSchool(schoolId, req.body);
+      if (!updatedSchool) {
+        return res.status(404).json({ message: "School not found" });
+      }
+      res.json(updatedSchool);
+    } catch (error) {
+      console.error("School update error:", error);
+      if (error instanceof Error) {
+        res.status(400).json({ message: error.message });
+      } else {
+        res.status(400).json({ message: "Invalid school data" });
+      }
+    }
+  });
+
   // Dashboard data endpoint
   app.get("/api/dashboard", requireAuth, async (req, res) => {
     try {
@@ -180,6 +199,25 @@ export function registerRoutes(app: Express): Server {
       res.status(201).json(newClass);
     } catch (error) {
       console.error("Class creation error:", error);
+      if (error instanceof Error) {
+        res.status(400).json({ message: error.message });
+      } else {
+        res.status(400).json({ message: "Invalid class data" });
+      }
+    }
+  });
+
+  app.put("/api/classes/:id", requireAuth, requireRole(["admin"]), async (req, res) => {
+    try {
+      console.log("Updating class:", req.params.id, req.body);
+      const classId = parseInt(req.params.id);
+      const updatedClass = await storage.updateClass(classId, req.body);
+      if (!updatedClass) {
+        return res.status(404).json({ message: "Class not found" });
+      }
+      res.json(updatedClass);
+    } catch (error) {
+      console.error("Class update error:", error);
       if (error instanceof Error) {
         res.status(400).json({ message: error.message });
       } else {
