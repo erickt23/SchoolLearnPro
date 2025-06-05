@@ -346,6 +346,65 @@ function CollapsibleSidebar({ isCollapsed, onToggle }: { isCollapsed: boolean; o
               if (isCollapsed) return null;
               if (!expandedSections.includes(item.sectionId!)) return null;
               
+              // Handle collapsible sub-items (like Discipline with sub-menus)
+              if (item.isCollapsible && item.subItems) {
+                const isSubExpanded = expandedSections.includes(`${item.sectionId}-${item.title}`);
+                
+                return (
+                  <div key={index} className="ml-4">
+                    <Button
+                      variant="ghost"
+                      onClick={() => toggleSection(`${item.sectionId}-${item.title}`)}
+                      className="w-full justify-start text-left hover:bg-accent pl-4 py-2"
+                    >
+                      <div className="flex items-center justify-between w-full">
+                        <div className="flex items-center">
+                          {item.icon && <item.icon className="h-4 w-4 mr-3 text-muted-foreground" />}
+                          <span className="text-sm text-foreground">{item.title}</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          {item.badge && (
+                            <Badge variant="secondary" className="text-xs">
+                              {item.badge}
+                            </Badge>
+                          )}
+                          {isSubExpanded ? (
+                            <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                          ) : (
+                            <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                          )}
+                        </div>
+                      </div>
+                    </Button>
+                    
+                    {/* Sub-sub items */}
+                    {isSubExpanded && item.subItems.map((subItem, subIndex) => (
+                      <Link key={subItem.path} href={subItem.path!}>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start text-left hover:bg-accent pl-12 py-2 ml-4"
+                        >
+                          <div className="flex items-center justify-between w-full">
+                            <div className="flex items-center">
+                              {subItem.icon && <subItem.icon className="h-4 w-4 mr-3 text-muted-foreground" />}
+                              <span className="text-sm text-foreground">{subItem.title}</span>
+                            </div>
+                            {subItem.badge && (
+                              <Badge variant="secondary" className="text-xs">
+                                {subItem.badge}
+                              </Badge>
+                            )}
+                          </div>
+                        </Button>
+                      </Link>
+                    ))}
+                  </div>
+                );
+              }
+              
+              // Regular sub-items
+              if (!item.path) return null;
+              
               return (
                 <Link key={item.path} href={item.path!}>
                   <Button
