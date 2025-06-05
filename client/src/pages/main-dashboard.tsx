@@ -123,6 +123,15 @@ function CollapsibleSidebar({ isCollapsed, onToggle }: { isCollapsed: boolean; o
             isCollapsible: true
           },
           {
+            title: t("E-Learning", "E-Learning", "E-Learning"),
+            icon: BookOpen,
+            path: "/elearning",
+            badge: "Nouveau",
+            isSection: false,
+            sectionId: "modules",
+            isSubItem: true
+          },
+          {
             title: t("Vidéoconférence", "Videokonferans", "Video Conference"),
             icon: Video,
             path: "/video-conference",

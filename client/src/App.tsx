@@ -19,6 +19,7 @@ import MobileApp from "@/pages/mobile-app";
 import SchoolManagement from "@/pages/school-management";
 import SchoolNetworkManagement from "@/pages/school-network-management";
 import CourseManagement from "@/pages/course-management";
+import ELearningDashboard from "@/pages/elearning-dashboard";
 import { ProtectedRoute } from "./lib/protected-route";
 import NotFound from "@/pages/not-found";
 
@@ -34,6 +35,7 @@ function Router() {
       <ProtectedRoute path="/video-conference" component={VideoConference} />
       <ProtectedRoute path="/payment-module" component={PaymentModule} />
       <ProtectedRoute path="/mobile-app" component={MobileApp} />
+      <ProtectedRoute path="/elearning" component={ELearningDashboard} />
       <ProtectedRoute path="/bulk-import" component={BulkImport} />
       <Route path="/landing" component={LandingPage} />
       <Route component={NotFound} />
