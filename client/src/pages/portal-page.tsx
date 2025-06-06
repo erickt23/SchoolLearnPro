@@ -184,10 +184,7 @@ export default function PortalPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await loginMutation.mutateAsync({
-        username: loginData.username,
-        password: loginData.password
-      } as any);
+      await loginMutation.mutateAsync(loginData as any);
       setShowLoginForm(false);
       setLocation("/dashboard");
       toast({
@@ -689,7 +686,7 @@ export default function PortalPage() {
                   <Input
                     id="username"
                     type="text"
-                    value={loginData.username}
+                    value={loginData.username as string}
                     onChange={(e) => setLoginData({ ...loginData, username: e.target.value })}
                     required
                   />
@@ -701,7 +698,7 @@ export default function PortalPage() {
                   <Input
                     id="password"
                     type="password"
-                    value={loginData.password}
+                    value={loginData.password as string}
                     onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
                     required
                   />
