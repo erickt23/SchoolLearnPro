@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useLanguage } from "@/hooks/use-language";
 import { Link, useLocation } from "wouter";
+import type { InsertUser } from "@shared/schema";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -76,7 +77,10 @@ export default function PortalPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showLoginForm, setShowLoginForm] = useState(false);
-  const [loginData, setLoginData] = useState({ username: "", password: "" });
+  const [loginData, setLoginData] = useState({ 
+    username: "", 
+    password: "" 
+  });
 
   // Mock data for demonstration
   const slides: Slide[] = [
@@ -183,7 +187,7 @@ export default function PortalPage() {
       await loginMutation.mutateAsync({
         username: loginData.username,
         password: loginData.password
-      });
+      } as any);
       setShowLoginForm(false);
       setLocation("/dashboard");
       toast({
@@ -213,10 +217,11 @@ export default function PortalPage() {
     }).format(date);
   };
 
-  if (user) {
-    setLocation("/dashboard");
-    return null;
-  }
+  useEffect(() => {
+    if (user) {
+      setLocation("/dashboard");
+    }
+  }, [user, setLocation]);
 
   return (
     <div className="min-h-screen bg-background">
