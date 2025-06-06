@@ -71,6 +71,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     onSuccess: () => {
       queryClient.setQueryData(["/api/user"], null);
+      // Redirect to portal/landing page after logout
+      window.location.href = "/";
     },
     onError: (error: Error) => {
       toast({

@@ -36,6 +36,8 @@ import {
   Contact
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import LanguageSwitcher from "@/components/language-switcher-new";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 interface NewsArticle {
   id: string;
@@ -267,8 +269,10 @@ export default function PortalPage() {
               </Button>
             </div>
 
-            {/* Login Button */}
+            {/* Language, Theme and Login Controls */}
             <div className="hidden md:flex items-center space-x-4">
+              <LanguageSwitcher />
+              <ThemeToggle />
               <Button 
                 onClick={() => setShowLoginForm(true)}
                 className="bg-primary hover:bg-primary/90"
@@ -316,7 +320,11 @@ export default function PortalPage() {
                   <Contact className="h-4 w-4 mr-2" />
                   {t("Contact", "Kontak", "Contact")}
                 </Button>
-                <div className="pt-2">
+                <div className="pt-4 border-t border-border">
+                  <div className="flex items-center justify-center space-x-4 mb-4">
+                    <LanguageSwitcher />
+                    <ThemeToggle />
+                  </div>
                   <Button 
                     onClick={() => setShowLoginForm(true)}
                     className="w-full bg-primary hover:bg-primary/90"
