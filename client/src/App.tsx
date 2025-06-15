@@ -8,7 +8,7 @@ import { LanguageProvider } from "./hooks/use-language";
 import { ThemeProvider } from "./hooks/use-theme";
 import LandingPage from "@/pages/landing-page-fixed";
 import AuthPage from "@/pages/auth-page-fixed";
-import PortalPage from "@/pages/portal-page";
+import PortalDemo from "@/pages/portal-demo";
 import MainDashboard from "@/pages/main-dashboard";
 import UserManagement from "@/pages/user-management";
 import UsersTable from "@/pages/users-table";
@@ -28,8 +28,8 @@ import NotFound from "@/pages/not-found";
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={PortalPage} />
-      <Route path="/portal" component={PortalPage} />
+      <Route path="/" component={PortalDemo} />
+      <Route path="/portal" component={PortalDemo} />
       <Route path="/auth" component={AuthPage} />
       <ProtectedRoute path="/dashboard" component={MainDashboard} />
       <ProtectedRoute path="/user-management" component={UserManagement} />
