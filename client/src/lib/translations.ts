@@ -1,289 +1,211 @@
-// Centralized translations for the application
-export const translations = {
-  // Navigation and Common
-  EduHaïti: {
-    fr: "EduHaïti",
-    ht: "EduAyiti",
-    en: "EduHaiti",
-  },
-  "Se connecter": {
-    fr: "Se connecter",
-    ht: "Konekte",
-    en: "Sign In",
-  },
-  "Créer un compte": {
-    fr: "Créer un compte",
-    ht: "Kreye yon kont",
-    en: "Create Account",
-  },
-  Déconnexion: {
-    fr: "Déconnexion",
-    ht: "Dekonekte",
-    en: "Sign Out",
-  },
-  "Tableau de bord": {
-    fr: "Tableau de bord",
-    ht: "Tablo jesyon",
-    en: "Dashboard",
-  },
-
-  // Landing Page
-  "Plateforme complète de gestion scolaire": {
-    fr: "Plateforme complète de gestion scolaire avec e-learning intégré, adaptée au contexte haïtien",
-    ht: "Platfòm konplè jesyon lekòl ak e-learning entegre, ki adapte pou kontèks ayisyen an",
-    en: "Complete school management platform with integrated e-learning, tailored for the Haitian context",
-  },
-
-  // Auth Page
-  Connexion: {
-    fr: "Connexion",
-    ht: "Koneksyon",
-    en: "Login",
-  },
-  Inscription: {
-    fr: "Inscription",
-    ht: "Enskripsyon",
-    en: "Registration",
-  },
-  "Nom d'utilisateur": {
-    fr: "Nom d'utilisateur",
-    ht: "Non itilizatè",
-    en: "Username",
-  },
-  "Mot de passe": {
-    fr: "Mot de passe",
-    ht: "Mo de pas",
-    en: "Password",
-  },
-  Email: {
-    fr: "Email",
-    ht: "Imel",
-    en: "Email",
-  },
-  Prénom: {
-    fr: "Prénom",
-    ht: "Non",
-    en: "First Name",
-  },
-  Nom: {
-    fr: "Nom",
-    ht: "Siyatè",
-    en: "Last Name",
-  },
-  Rôle: {
-    fr: "Rôle",
-    ht: "Wòl",
-    en: "Role",
-  },
-
-  // Roles
-  "Administrateur de réseau": {
-    fr: "Administrateur de réseau",
-    ht: "Administratè rezo",
-    en: "Network Administrator",
-  },
-  "Administrateur d'école": {
-    fr: "Administrateur d'école",
-    ht: "Administratè lekòl",
-    en: "School Administrator",
-  },
-  Enseignant: {
-    fr: "Enseignant",
-    ht: "Pwofesè",
-    en: "Teacher",
-  },
-  Élève: {
-    fr: "Élève",
-    ht: "Elèv",
-    en: "Student",
-  },
-  Parent: {
-    fr: "Parent",
-    ht: "Paran",
-    en: "Parent",
-  },
-
-  // Multi-tenant fields
-  École: {
-    fr: "École",
-    ht: "Lekòl",
-    en: "School",
-  },
-  "Réseau d'écoles": {
-    fr: "Réseau d'écoles",
-    ht: "Rezo lekòl yo",
-    en: "School Network",
-  },
-  "Sélectionner une école": {
-    fr: "Sélectionner une école",
-    ht: "Chwazi yon lekòl",
-    en: "Select a school",
-  },
-  "Sélectionner un réseau": {
-    fr: "Sélectionner un réseau",
-    ht: "Chwazi yon rezo",
-    en: "Select a network",
-  },
-
-  // Features
-  "Gestion des élèves": {
-    fr: "Gestion des élèves",
-    ht: "Jesyon elèv yo",
-    en: "Student Management",
-  },
-  "Suivi des notes": {
-    fr: "Suivi des notes",
-    ht: "Swiv nòt yo",
-    en: "Grade Tracking",
-  },
-  Présences: {
-    fr: "Présences",
-    ht: "Prezans",
-    en: "Attendance",
-  },
-  "E-learning": {
-    fr: "E-learning",
-    ht: "Kou anliy",
-    en: "E-learning",
-  },
-  Communication: {
-    fr: "Communication",
-    ht: "Kominikasyon",
-    en: "Communication",
-  },
-
-  // Dashboard sections
-  "Mes classes": {
-    fr: "Mes classes",
-    ht: "Klas yo mwen",
-    en: "My Classes",
-  },
-  "Mes cours": {
-    fr: "Mes cours",
-    ht: "Kou yo mwen",
-    en: "My Courses",
-  },
-  "Mes devoirs": {
-    fr: "Mes devoirs",
-    ht: "Devwa yo mwen",
-    en: "My Assignments",
-  },
-  Statistiques: {
-    fr: "Statistiques",
-    ht: "Estatistik",
-    en: "Statistics",
-  },
-
-  // Form validation
-  "Ce champ est requis": {
-    fr: "Ce champ est requis",
-    ht: "Jaden sa a obligatwa",
-    en: "This field is required",
-  },
-  "Email invalide": {
-    fr: "Email invalide",
-    ht: "Imel pa bon",
-    en: "Invalid email",
-  },
-  "Mot de passe trop court": {
-    fr: "Le mot de passe doit contenir au moins 6 caractères",
-    ht: "Mo de pas la dwe gen omwen 6 karaktè",
-    en: "Password must be at least 6 characters",
-  },
-
-  // Messages
-  "Connexion réussie": {
-    fr: "Connexion réussie",
-    ht: "Koneksyon reyisi",
-    en: "Login successful",
-  },
-  "Compte créé avec succès": {
-    fr: "Compte créé avec succès",
-    ht: "Kont kreye ak siksè",
-    en: "Account created successfully",
-  },
-  "Erreur lors de la connexion": {
-    fr: "Erreur lors de la connexion",
-    ht: "Erè nan koneksyon an",
-    en: "Login error",
-  },
-
-  // Testimonials
-  "Directrice, École Sainte-Marie": {
-    fr: "Directrice, École Sainte-Marie",
-    ht: "Direktè, Lekòl Sainte-Marie",
-    en: "Principal, Sainte-Marie School",
-  },
-  "Enseignante, Collège Moderne": {
-    fr: "Enseignante, Collège Moderne",
-    ht: "Pwofesè, Collège Moderne",
-    en: "Teacher, Modern College",
-  },
-  "Administrateur, Institut Saint-Louis": {
-    fr: "Administrateur, Institut Saint-Louis",
-    ht: "Administratè, Institut Saint-Louis",
-    en: "Administrator, Saint-Louis Institute",
-  },
-
-  // Landing page content
-  Fonctionnalités: {
-    fr: "Fonctionnalités",
-    ht: "Fonksyon yo",
-    en: "Features",
-  },
-  Témoignages: {
-    fr: "Témoignages",
-    ht: "Temwayaj yo",
-    en: "Testimonials",
-  },
-  Contact: {
-    fr: "Contact",
-    ht: "Kontak",
-    en: "Contact",
-  },
-  Commencer: {
-    fr: "Commencer",
-    ht: "Kòmanse",
-    en: "Get Started",
-  },
-  "Faible Bande Passante": {
-    fr: "Faible Bande Passante",
-    ht: "Ti Koneksyon",
-    en: "Low Bandwidth",
-  },
-  "Interface optimisée": {
-    fr: "Interface optimisée pour connexions 2G/3G avec compression avancée",
-    ht: "Entèfas optimize pou koneksyon 2G/3G ak konpresyon avanse",
-    en: "Interface optimized for 2G/3G connections with advanced compression",
-  },
-  "Support Multilingue": {
-    fr: "Support Multilingue",
-    ht: "Sipò Plizyè Lang",
-    en: "Multilingual Support",
-  },
-  "Français, Créole et Anglais": {
-    fr: "Français, Créole et Anglais intégrés avec traduction automatique",
-    ht: "Fransè, Kreyòl ak Angle entegre ak tradiksyon otomatik",
-    en: "French, Creole and English integrated with automatic translation",
-  },
-  "Accès Hors Ligne": {
-    fr: "Accès Hors Ligne",
-    ht: "Aksè San Entènèt",
-    en: "Offline Access",
-  },
-  Synchronisation: {
-    fr: "Synchronisation automatique des données dès connexion rétablie",
-    ht: "Senkronizasyon otomatik done yo depi koneksyon an retabli",
-    en: "Automatic data synchronization once connection is restored",
-  },
-};
-
-export type TranslationKey = keyof typeof translations;
+// Centralized translation system for EduPro
 export type Language = "fr" | "ht" | "en";
 
-export function getTranslation(
-  key: TranslationKey,
-  language: Language,
-): string {
-  return translations[key]?.[language] || translations[key]?.fr || key;
+export const translations = {
+  fr: {
+    // Portal & Navigation
+    home: "Accueil",
+    dashboard: "Tableau de bord", 
+    about: "À propos",
+    contact: "Contact",
+    news: "Actualités",
+    admission: "Admission",
+    login: "Se connecter",
+    logout: "Se déconnecter",
+    welcome: "Bienvenue",
+    learn_more: "En savoir plus",
+    discover: "Découvrir",
+    why_edupro: "Pourquoi EduPro",
+    
+    // Authentication
+    username: "Nom d'utilisateur",
+    password: "Mot de passe",
+    sign_in: "Se connecter",
+    forgot_password: "Mot de passe oublié ?",
+    login_success: "Connexion réussie",
+    
+    // Portal Content
+    academic_excellence: "Excellence académique",
+    quality_education: "Formation de qualité",
+    quality_education_desc: "Nous offrons une éducation de qualité supérieure pour préparer nos étudiants au succès.",
+    modern_technology: "Technologie moderne",
+    digital_learning: "Apprentissage numérique",
+    digital_learning_desc: "Nos plateformes e-learning modernes facilitent l'apprentissage à distance et l'interaction.",
+    school_community: "Communauté scolaire",
+    together_excellence: "Ensemble vers l'excellence",
+    school_community_desc: "Une communauté unie d'étudiants, enseignants et parents travaillant ensemble.",
+    
+    // News & Events
+    news_announcements: "Actualités & Annonces",
+    upcoming_events: "Événements à venir",
+    view_all_news: "Voir toutes les actualités",
+    view_full_calendar: "Voir le calendrier complet",
+    
+    // Statistics
+    edupro_in_numbers: "EduPro en Chiffres",
+    students: "Étudiants",
+    teachers: "Enseignants", 
+    classes: "Classes",
+    success_rate: "Réussite",
+    
+    // Quick Links
+    quick_links: "Liens Rapides",
+    elearning_platform: "Plateforme E-learning",
+    online_admission: "Admission en Ligne",
+    results_grades: "Résultats & Notes",
+    school_calendar: "Calendrier Scolaire",
+    
+    // Footer
+    useful_links: "Liens Utiles",
+    contact_info: "Contact",
+    school_management_system: "Système de Gestion Scolaire",
+    comprehensive_platform: "Une plateforme complète de gestion scolaire conçue pour l'excellence éducative en Haïti.",
+    all_rights_reserved: "Tous droits réservés.",
+    privacy_policy: "Politique de Confidentialité",
+    terms_of_service: "Conditions d'Utilisation",
+    port_au_prince_haiti: "Port-au-Prince, Haïti",
+    edupro_tagline: "Excellence • Innovation • Réussite"
+  },
+
+  ht: {
+    // Portal & Navigation
+    home: "Akèy",
+    dashboard: "Tablo jesyon", 
+    about: "Konsènan",
+    contact: "Kontak",
+    news: "Nouvel",
+    admission: "Admisyon",
+    login: "Konekte",
+    logout: "Dekonekte",
+    welcome: "Byenveni",
+    learn_more: "Konnen plis",
+    discover: "Dekouvri",
+    why_edupro: "Poukisa EduPro",
+    
+    // Authentication
+    username: "Non itilizatè",
+    password: "Modpas",
+    sign_in: "Konekte",
+    forgot_password: "Bliye modpas?",
+    login_success: "Koneksyon rèsi",
+    
+    // Portal Content
+    academic_excellence: "Ekselans akademik",
+    quality_education: "Fòmasyon kalite",
+    quality_education_desc: "Nou bay yon edikasyon kalite segondè pou prepare etidyan nou yo pou siksè.",
+    modern_technology: "Teknoloji modèn",
+    digital_learning: "Aprantisaj dijital",
+    digital_learning_desc: "Platfòm e-learning modèn nou yo fasilite aprantisaj adistans ak entèraksyon.",
+    school_community: "Kominote lekòl",
+    together_excellence: "Ansanm vè ekselans",
+    school_community_desc: "Yon kominote ini etidyan yo, pwofesè yo ak paran yo k ap travay ansanm.",
+    
+    // News & Events
+    news_announcements: "Nouvel ak Anonse",
+    upcoming_events: "Evènman k ap vini",
+    view_all_news: "Gade tout nouvel yo",
+    view_full_calendar: "Gade kalandriye konplè a",
+    
+    // Statistics
+    edupro_in_numbers: "EduPro nan Chif",
+    students: "Etidyan",
+    teachers: "Pwofesè", 
+    classes: "Klas",
+    success_rate: "To siksè",
+    
+    // Quick Links
+    quick_links: "Lyen rapid",
+    elearning_platform: "Platfòm E-learning",
+    online_admission: "Admisyon sou entènèt",
+    results_grades: "Rezilta ak nòt",
+    school_calendar: "Kalandriye lekòl",
+    
+    // Footer
+    useful_links: "Lyen itil",
+    contact_info: "Kontak",
+    school_management_system: "Sistèm jesyon lekòl",
+    comprehensive_platform: "Yon platfòm konplè jesyon lekòl ki fèt pou ekselans edikasyon an nan Ayiti.",
+    all_rights_reserved: "Tout dwa yo rezève.",
+    privacy_policy: "Politik konfidansyalite",
+    terms_of_service: "Kondisyon sèvis",
+    port_au_prince_haiti: "Pòtoprens, Ayiti",
+    edupro_tagline: "Ekselans • Inovasyon • Siksè"
+  },
+
+  en: {
+    // Portal & Navigation
+    home: "Home",
+    dashboard: "Dashboard", 
+    about: "About",
+    contact: "Contact",
+    news: "News",
+    admission: "Admission",
+    login: "Login",
+    logout: "Logout",
+    welcome: "Welcome",
+    learn_more: "Learn More",
+    discover: "Discover",
+    why_edupro: "Why EduPro",
+    
+    // Authentication
+    username: "Username",
+    password: "Password",
+    sign_in: "Sign In",
+    forgot_password: "Forgot Password?",
+    login_success: "Login Successful",
+    
+    // Portal Content
+    academic_excellence: "Academic Excellence",
+    quality_education: "Quality Education",
+    quality_education_desc: "We provide superior quality education to prepare our students for success.",
+    modern_technology: "Modern Technology",
+    digital_learning: "Digital Learning",
+    digital_learning_desc: "Our modern e-learning platforms facilitate distance learning and interaction.",
+    school_community: "School Community",
+    together_excellence: "Together Towards Excellence",
+    school_community_desc: "A united community of students, teachers and parents working together.",
+    
+    // News & Events
+    news_announcements: "News & Announcements",
+    upcoming_events: "Upcoming Events",
+    view_all_news: "View All News",
+    view_full_calendar: "View Full Calendar",
+    
+    // Statistics
+    edupro_in_numbers: "EduPro in Numbers",
+    students: "Students",
+    teachers: "Teachers", 
+    classes: "Classes",
+    success_rate: "Success Rate",
+    
+    // Quick Links
+    quick_links: "Quick Links",
+    elearning_platform: "E-learning Platform",
+    online_admission: "Online Admission",
+    results_grades: "Results & Grades",
+    school_calendar: "School Calendar",
+    
+    // Footer
+    useful_links: "Useful Links",
+    contact_info: "Contact",
+    school_management_system: "School Management System",
+    comprehensive_platform: "A comprehensive school management platform designed for educational excellence in Haiti.",
+    all_rights_reserved: "All rights reserved.",
+    privacy_policy: "Privacy Policy",
+    terms_of_service: "Terms of Service",
+    port_au_prince_haiti: "Port-au-Prince, Haiti",
+    edupro_tagline: "Excellence • Innovation • Success"
+  }
+} as const;
+
+export type TranslationKey = keyof typeof translations.fr;
+
+// Helper function to get translation
+export function getTranslation(key: TranslationKey, language: Language): string {
+  return translations[language][key] || translations.en[key] || key;
+}
+
+// Type-safe translation function
+export function t(key: TranslationKey, language: Language): string {
+  return getTranslation(key, language);
 }
