@@ -25,7 +25,7 @@ export const translations = {
     login_success: "Connexion réussie",
     
     // Portal Content
-    academic_excellence: "Excellences académiques!",
+    academic_excellence: "Excellence académique",
     quality_education: "Formation de qualité",
     quality_education_desc: "Nous offrons une éducation de qualité supérieure pour préparer nos étudiants au succès.",
     modern_technology: "Technologie moderne",
